@@ -1,0 +1,5 @@
+package pentaminoes
+
+class Pentamino {
+  
+}
