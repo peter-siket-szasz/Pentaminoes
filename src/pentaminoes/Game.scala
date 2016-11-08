@@ -1,0 +1,7 @@
+package pentaminoes
+
+object Game {
+  
+  
+  
+}
