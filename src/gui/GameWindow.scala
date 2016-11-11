@@ -125,7 +125,7 @@ object GameWindow extends SimpleSwingApplication {
     layout(nextPentaminoes) = c
   }
   
-  val newGame = Action("New game") { Game.newGame; grid.repaint }
+  val newGame = Action("New game") { Game.newGame; screen.repaint }
     
   def top: MainFrame = new MainFrame {
     
@@ -134,11 +134,11 @@ object GameWindow extends SimpleSwingApplication {
     location = new Point(200, 100)
     preferredSize = new Dimension(1000, 900)
 
-    /*menuBar = new MenuBar {
+    menuBar = new MenuBar {
       contents += new Menu("Game") {
         contents += new MenuItem(newGame)
       }
-    }*/
+    }
     contents = screen
     
     listenTo(grid.mouse.clicks, grid.keys)
