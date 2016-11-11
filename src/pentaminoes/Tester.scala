@@ -41,10 +41,19 @@ object Tester extends App{
 	println(Pentamino('p',1,2,3,4,5))
 	println(Pentamino('ä',1,2,3,4,5))
 	// */
-
+  
+	/*
 	val list = Array.fill(24)(Pentamino.random(1, 2, 3, 4, 5))
 	println(list.mkString("\n"))
+	// */
 	
+	println(Game.currentPentamino)
+	println(Game.nextPentamino)
+	
+	Game.placePentamino(0,0)
+	
+	println(Game.currentPentamino)
+	println(Game.nextPentamino)	
 	
 	
 	
