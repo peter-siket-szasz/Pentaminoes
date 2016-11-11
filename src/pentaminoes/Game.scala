@@ -50,7 +50,17 @@ object Game {
   def nextPentamino = this.secondPentamino
   
   // Returns 2-dimensional Vector of Ints(/colors) in Grid
-  def gridColors: Vector[Vector[Int]] = ??? // TODO calls Grid's methods
+  def gridColors: Vector[Vector[Int]] = {
+    //TODO: Implement this method as intended
+    Vector(Vector(1,2,1,2,1,2,3),
+           Vector(2,1,2,1,2,1,2),
+           Vector(1,2,1,2,1,2,1),
+           Vector(2,1,2,1,2,1,2),
+           Vector(1,2,1,2,1,2,1),
+           Vector(2,1,2,1,2,1,2),
+           Vector(0,0,0,0,0,0,0))
+  }
+  
   
   def level = this.currentLevel
   

@@ -9,8 +9,6 @@ import scala.util.Random
 import javax.swing.UIManager
 
 object GameWindow extends SimpleSwingApplication {
-  Game.fillColors(Game.gridColors)
-  Game.fillColors(Game.nextColors)
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
   val gridWidth = Game.gridColors(0).size
@@ -23,7 +21,7 @@ object GameWindow extends SimpleSwingApplication {
 
   val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED)
   
-  def paintLinesAndSquares(g: Graphics2D, colors: Array[Array[Int]], blockSize: Int) = {
+  def paintLinesAndSquares(g: Graphics2D, colors: Vector[Vector[Int]], blockSize: Int) = {
     
     val sidex = colors(0).size
     val sidey = colors.size
@@ -31,7 +29,7 @@ object GameWindow extends SimpleSwingApplication {
     for (row <- 0 until sidey) {
       for (col <- 0 until sidex) {
         g.setColor(numbersToColors(colors(row)(col)))
-        g.fillRect(row * blockSize, col * blockSize, blockSize, blockSize)
+        g.fillRect(col * blockSize, row * blockSize, blockSize, blockSize)
       }
     }
     g.setColor(Color.BLACK)
@@ -39,6 +37,8 @@ object GameWindow extends SimpleSwingApplication {
       g.drawLine(x * blockSize, 0, x * blockSize, sidey * blockSize)
       g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
     }
+    println(colors.mkString("\n"))
+    println("\n")
   }
   
   val grid = new GridPanel(gridWidth, gridHeight) {
@@ -55,7 +55,7 @@ object GameWindow extends SimpleSwingApplication {
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
     
-    override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextColors, smallBlockSize)
+    override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.currentPentamino.toVector, smallBlockSize)
   }
   
   val nextPentamino = new GridPanel(nextGridSize, nextGridSize) {
@@ -63,7 +63,7 @@ object GameWindow extends SimpleSwingApplication {
     preferredSize = new Dimension(nextGridSize * blockSize, nextGridSize * blockSize)
     focusable = false
     
-    override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextColors, smallBlockSize)
+    override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextPentamino.toVector, smallBlockSize)
   }
   
   val nextPentaminoes = new GridBagPanel {
@@ -90,7 +90,7 @@ object GameWindow extends SimpleSwingApplication {
     layout(nextPentaminoes) = c
   }
   
-  val newGame = Action("New game") { Game.fillColors(Game.gridColors); grid.repaint }
+  val newGame = Action("New game") { Game.newGame; grid.repaint }
     
   def top: MainFrame = new MainFrame {
     
@@ -108,16 +108,16 @@ object GameWindow extends SimpleSwingApplication {
     
     listenTo(grid.mouse.clicks)
     listenTo(grid.keys)
-    reactions += {
+    /*reactions += {
       case MouseClicked(grid, point, _, _, _)  => {
-        Game.gridColors(point.x / blockSize)(point.y / blockSize) = 3
+        Game.gridColors (point.x / blockSize)(point.y / blockSize) = 3
         grid.repaint()
       }
       case KeyPressed(grid, _, _, _) => {
         Game.gridColors(Random.nextInt(gridWidth))(Random.nextInt(gridHeight)) = Random.nextInt(4)
         grid.repaint()
       }
-    }
+    }*/
   }
 }
   
