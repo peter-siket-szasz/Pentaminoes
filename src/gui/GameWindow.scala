@@ -6,7 +6,7 @@ import scala.swing.event._
 import java.awt.Color
 import scala.swing.GridBagPanel._
 import scala.util.Random
-import javax.swing.UIManager
+import javax.swing. { UIManager, ImageIcon }
 
 object GameWindow extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
@@ -18,6 +18,12 @@ object GameWindow extends SimpleSwingApplication {
   val gridDimesnion = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
   val nextGridSize = 5
   val nextGridDimension = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
+  
+  val verticalPic = new ImageIcon("Icons/flipVertical.png")
+  val horizontalPic = new ImageIcon("Icons/flipHorizontal.png")
+  val clockwisePic = new ImageIcon("Icons/rotateClockwise.png")
+  val counterclockwisePic = new ImageIcon("Icons/rotateCounterclockwise.png")
+  
 
   val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED)
   
@@ -37,8 +43,6 @@ object GameWindow extends SimpleSwingApplication {
       g.drawLine(x * blockSize, 0, x * blockSize, sidey * blockSize)
       g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
     }
-    println(colors.mkString("\n"))
-    println("\n")
   }
   
   val grid = new GridPanel(gridWidth, gridHeight) {
@@ -66,15 +70,46 @@ object GameWindow extends SimpleSwingApplication {
     override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextPentamino.toVector, smallBlockSize)
   }
   
+  val flipVertically = new Button {
+    preferredSize = new Dimension(100,100)
+    icon = horizontalPic
+    focusable = true
+  }
+  
+  val rotateClockwise = new Button {
+    preferredSize = new Dimension(100,100)
+    icon = clockwisePic
+    focusable = true
+  }
+  
+  val rotateCounterclockwise = new Button {
+    preferredSize = new Dimension(100,100)
+    icon = counterclockwisePic
+    focusable = true
+  }
+  
+  
   val nextPentaminoes = new GridBagPanel {
     val c = new Constraints
-    c.gridx = 0
+    c.gridx = 1
     c.gridy = 0
-    c.insets = new Insets(125,-50,0,0)
-    layout(currentPentamino) = c
+    c.insets = new Insets(0,-120,0,0)
+    layout(flipVertically) = c
     c.gridx = 0
     c.gridy = 1
-    c.insets = new Insets(25,75,0,0)
+    c.insets = new Insets(0,25,0,25)
+    layout(rotateCounterclockwise) = c
+    c.gridx = 2
+    c.gridy = 1
+    c.insets = new Insets(0,-100,0,0)
+    layout(rotateClockwise) = c
+    c.gridx = 1
+    c.gridy = 1
+    c.insets = new Insets(25,-125,0,0)
+    layout(currentPentamino) = c
+    c.gridx = 1
+    c.gridy = 2
+    c.insets = new Insets(25,0,0,0)
     layout(nextPentamino) = c
   }
     
@@ -106,18 +141,20 @@ object GameWindow extends SimpleSwingApplication {
     }*/
     contents = screen
     
-    listenTo(grid.mouse.clicks)
-    listenTo(grid.keys)
-    /*reactions += {
-      case MouseClicked(grid, point, _, _, _)  => {
+    listenTo(grid.mouse.clicks, grid.keys)
+    listenTo(flipVertically, rotateClockwise)
+    reactions += {
+      /*case MouseClicked(grid, point, _, _, _)  => {
         Game.gridColors (point.x / blockSize)(point.y / blockSize) = 3
         grid.repaint()
       }
       case KeyPressed(grid, _, _, _) => {
         Game.gridColors(Random.nextInt(gridWidth))(Random.nextInt(gridHeight)) = Random.nextInt(4)
         grid.repaint()
+      }*/
+      case ButtonClicked(flipVertically) => {
       }
-    }*/
+    }
   }
 }
   
