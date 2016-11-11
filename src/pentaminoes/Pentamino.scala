@@ -16,8 +16,8 @@ class Pentamino(private var array: Array[Array[Int]]) {
   
   def apply(x: Int, y:Int):Int = this.toVector(x+2)(y+2) //relative, (2,2) -> (0,0)
   
-  // rotate methods and flip methods and randomRotation all 
-  // both makes changes to original Pentamino and return the modified version of it
+  /* Rotate methods and flip methods and randomRotation all 
+  both make changes to original Pentamino and return the modified version of it */
   
   def rotateClockwise(): Pentamino = {
     val newArray = Array.fill(5,5)(0)
@@ -48,14 +48,14 @@ class Pentamino(private var array: Array[Array[Int]]) {
   }
   
   def randomRotation(): Pentamino = { // Randomly flip AND/OR rotate Pentamino
-    new Random().nextInt(4) match { // Random rotation
+    Random.nextInt(4) match { // Random rotation
       case 0 => this
       case 1 => this.rotateClockwise()
       case 2 => {this.rotateClockwise(); this.rotateClockwise()}
       case 3 => this.rotateCounterClockwise()
     }
     
-    new Random().nextInt(4) match { // Random flip
+    Random.nextInt(4) match { // Random flip
       case 0 => this
       case 1 => this.flipHorizontal()
       case 2 => this.flipVertical()
@@ -65,12 +65,11 @@ class Pentamino(private var array: Array[Array[Int]]) {
     this
   }
   
-  
 }
 
 object Pentamino {
   
-  def pentaminoes: Array[Char] = Array('p', 'x', 'f', 'v', 'w', 'y', 'i', 't', 'z', 'u', 'n', 'l')
+  def pentaminoes: Vector[Char] = Vector('p', 'x', 'f', 'v', 'w', 'y', 'i', 't', 'z', 'u', 'n', 'l')
   
   def apply(param: Array[Array[Int]]): Pentamino = new Pentamino(param)
   
@@ -101,8 +100,7 @@ object Pentamino {
   
   // Random shaped and rotated Pentamino
   def random(c1: Int, c2: Int, c3:Int, c4:Int, c5:Int): Pentamino = {
-    val randomInt = new Random().nextInt(pentaminoes.size)
-    val pentaminoChar = this.pentaminoes(randomInt)
+    val pentaminoChar = this.pentaminoes(Random.nextInt(pentaminoes.size))
     this(pentaminoChar, c1, c2, c3, c4, c5).randomRotation()
   }
   
