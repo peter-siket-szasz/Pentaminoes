@@ -70,7 +70,7 @@ object GameWindow extends SimpleSwingApplication {
     override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextPentamino.toVector, smallBlockSize)
   }
   
-  val flipVertically = new Button {
+  val flipHorizontally = new Button {
     preferredSize = new Dimension(100,100)
     icon = horizontalPic
     focusable = true
@@ -94,7 +94,7 @@ object GameWindow extends SimpleSwingApplication {
     c.gridx = 1
     c.gridy = 0
     c.insets = new Insets(0,-120,0,0)
-    layout(flipVertically) = c
+    layout(flipHorizontally) = c
     c.gridx = 0
     c.gridy = 1
     c.insets = new Insets(0,25,0,25)
@@ -142,7 +142,7 @@ object GameWindow extends SimpleSwingApplication {
     contents = screen
     
     listenTo(grid.mouse.clicks, grid.keys)
-    listenTo(flipVertically, rotateClockwise)
+    listenTo(flipHorizontally, rotateClockwise, rotateCounterclockwise)
     reactions += {
       /*case MouseClicked(grid, point, _, _, _)  => {
         Game.gridColors (point.x / blockSize)(point.y / blockSize) = 3
@@ -152,7 +152,11 @@ object GameWindow extends SimpleSwingApplication {
         Game.gridColors(Random.nextInt(gridWidth))(Random.nextInt(gridHeight)) = Random.nextInt(4)
         grid.repaint()
       }*/
-      case ButtonClicked(flipVertically) => {
+      case ButtonClicked(source) => {
+        if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
+        else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
+        else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise
+        screen.repaint
       }
     }
   }
