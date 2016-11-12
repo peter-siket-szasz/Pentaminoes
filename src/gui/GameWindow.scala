@@ -1,6 +1,7 @@
 package gui
 
 import pentaminoes._
+import Game.grid
 import scala.swing._
 import scala.swing.event._
 import java.awt.Color
@@ -27,7 +28,7 @@ object GameWindow extends SimpleSwingApplication {
 
   val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED)
   
-  def paintLinesAndSquares(g: Graphics2D, colors: Vector[Vector[Int]], blockSize: Int) = {
+  def paintLinesAndSquares(g: Graphics2D, colors: grid, blockSize: Int) = {
     
     val sidex = colors(0).size
     val sidey = colors.size

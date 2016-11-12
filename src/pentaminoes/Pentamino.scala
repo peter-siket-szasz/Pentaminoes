@@ -1,6 +1,7 @@
 package pentaminoes
 
 import scala.util.Random
+import Game.grid
 
 class Pentamino(private var array: Array[Array[Int]]) {
   
@@ -12,7 +13,7 @@ class Pentamino(private var array: Array[Array[Int]]) {
     text
   }
   
-  def toVector: Vector[Vector[Int]] = this.array.map(_.toVector).toVector
+  def toVector: grid = this.array.map(_.toVector).toVector
   
   def apply(x: Int, y:Int):Int = this.toVector(x+2)(y+2) //relative, (2,2) -> (0,0)
   

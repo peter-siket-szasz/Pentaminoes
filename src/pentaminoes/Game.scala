@@ -4,6 +4,8 @@ import scala.util.Random
 
 object Game {
   
+  type grid = Vector[Vector[Int]]
+  
   private var numberOfColors = 2
   private var currentLevel = 1
   private var currentScore = 0
@@ -50,7 +52,7 @@ object Game {
   def nextPentamino = this.secondPentamino
   
   // Returns 2-dimensional Vector of Ints(/colors) in Grid
-  def gridColors: Vector[Vector[Int]] = {
+  def gridColors: grid = {
     //TODO: Implement this method as intended
     Vector(Vector(1,2,1,2,1,2,3),
            Vector(2,1,2,1,2,1,2),
