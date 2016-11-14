@@ -77,6 +77,12 @@ object GameWindow extends SimpleSwingApplication {
     focusable = true
   }
   
+  val flipVertically = new Button {
+    preferredSize = new Dimension(100,100)
+    icon = verticalPic
+    focusable = true
+  }
+  
   val rotateClockwise = new Button {
     preferredSize = new Dimension(100,100)
     icon = clockwisePic
@@ -92,25 +98,29 @@ object GameWindow extends SimpleSwingApplication {
   
   val nextPentaminoes = new GridBagPanel {
     val c = new Constraints
-    c.gridx = 1
+    c.gridx = 0
     c.gridy = 0
-    c.insets = new Insets(0,-120,0,0)
+    c.insets = new Insets(0,50,0,0)
     layout(flipHorizontally) = c
+    c.gridx = 2
+    c.gridy = 0
+    c.insets = new Insets(0,-75,0,0)
+    layout(flipVertically) = c
     c.gridx = 0
     c.gridy = 1
-    c.insets = new Insets(0,25,0,25)
+    c.insets = new Insets(0,50,0,0)
     layout(rotateCounterclockwise) = c
     c.gridx = 2
     c.gridy = 1
-    c.insets = new Insets(0,-100,0,0)
+    c.insets = new Insets(0,-75,0,0)
     layout(rotateClockwise) = c
     c.gridx = 1
     c.gridy = 1
-    c.insets = new Insets(25,-125,0,0)
+    c.insets = new Insets(25,-50,0,25)
     layout(currentPentamino) = c
     c.gridx = 1
     c.gridy = 2
-    c.insets = new Insets(25,0,0,0)
+    c.insets = new Insets(25,50,0,0)
     layout(nextPentamino) = c
   }
     
@@ -143,7 +153,7 @@ object GameWindow extends SimpleSwingApplication {
     contents = screen
     
     listenTo(grid.mouse.clicks, grid.keys)
-    listenTo(flipHorizontally, rotateClockwise, rotateCounterclockwise)
+    listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
     reactions += {
       /*case MouseClicked(grid, point, _, _, _)  => {
         Game.gridColors (point.x / blockSize)(point.y / blockSize) = 3
@@ -155,8 +165,9 @@ object GameWindow extends SimpleSwingApplication {
       }*/
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
+        else if (source == flipVertically) Game.currentPentamino.flipVertical()
         else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
-        else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise
+        else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
         screen.repaint
       }
     }
