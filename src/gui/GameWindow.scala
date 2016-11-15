@@ -65,7 +65,7 @@ object GameWindow extends SimpleSwingApplication {
   
   val nextPentamino = new GridPanel(nextGridSize, nextGridSize) {
     
-    preferredSize = new Dimension(nextGridSize * blockSize, nextGridSize * blockSize)
+    preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
     
     override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextPentamino.toVector, smallBlockSize)
@@ -94,46 +94,41 @@ object GameWindow extends SimpleSwingApplication {
     icon = counterclockwisePic
     focusable = true
   }
-  
-  
-  val nextPentaminoes = new GridBagPanel {
-    val c = new Constraints
-    c.gridx = 0
-    c.gridy = 0
-    c.insets = new Insets(0,50,0,0)
-    layout(flipHorizontally) = c
-    c.gridx = 2
-    c.gridy = 0
-    c.insets = new Insets(0,-75,0,0)
-    layout(flipVertically) = c
-    c.gridx = 0
-    c.gridy = 1
-    c.insets = new Insets(0,50,0,0)
-    layout(rotateCounterclockwise) = c
-    c.gridx = 2
-    c.gridy = 1
-    c.insets = new Insets(0,-75,0,0)
-    layout(rotateClockwise) = c
-    c.gridx = 1
-    c.gridy = 1
-    c.insets = new Insets(25,-50,0,25)
-    layout(currentPentamino) = c
-    c.gridx = 1
-    c.gridy = 2
-    c.insets = new Insets(25,50,0,0)
-    layout(nextPentamino) = c
-  }
     
   val screen = new GridBagPanel {
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
-    c.insets = new Insets(0,0,0,0)
+    c.gridwidth = 3
+    c.gridheight = 3
+    c.insets = new Insets(0,0,0,25)
     layout(grid) = c
-    c.gridx = 1
+    c.gridwidth = 1
+    c.gridheight = 1
+    c.gridx = 3
     c.gridy = 0
+    c.insets = new Insets(0,100,0,0)
+    layout(flipHorizontally) = c
+    c.gridx = 5
+    c.gridy = 0
+    c.insets = new Insets(0,-100,0,0)
+    layout(flipVertically) = c
+    c.gridx = 3
+    c.gridy = 1
     c.insets = new Insets(0,0,0,0)
-    layout(nextPentaminoes) = c
+    layout(rotateCounterclockwise) = c
+    c.gridx = 5
+    c.gridy = 1
+    c.insets = new Insets(0,0,0,0)
+    layout(rotateClockwise) = c
+    c.gridx = 4
+    c.gridy = 1
+    c.insets = new Insets(25,-25,0,25)
+    layout(currentPentamino) = c
+    c.gridx = 4
+    c.gridy = 2
+    c.insets = new Insets(25,-50,0,0)
+    layout(nextPentamino) = c
   }
   
   val newGame = Action("New game") { Game.newGame; screen.repaint }
