@@ -54,13 +54,7 @@ object Game {
   // Returns 2-dimensional Vector of Ints(/colors) in Grid
   def gridColors: grid = {
     //TODO: Implement this method as intended
-    Vector(Vector(1,2,1,2,1,2,3),
-           Vector(2,1,2,1,2,1,2),
-           Vector(1,2,1,2,1,2,1),
-           Vector(2,1,2,1,2,1,2),
-           Vector(1,2,1,2,1,2,1),
-           Vector(2,1,2,1,2,1,2),
-           Vector(0,0,0,0,0,0,0))
+    Vector.tabulate(7,7)((x,y) => Random.nextInt(3))
   }
   
   
