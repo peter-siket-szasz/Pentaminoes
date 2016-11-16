@@ -40,10 +40,8 @@ object GameWindow extends SimpleSwingApplication {
       }
     }
     g.setColor(Color.BLACK)
-    for (x <- 1 until sidex; y <- 1 until sidey) {
-      g.drawLine(x * blockSize, 0, x * blockSize, sidey * blockSize)
-      g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
-    }
+    for (x <- 1 until sidex) g.drawLine(x * blockSize, 0, x * blockSize, sidey * blockSize)
+    for (y <- 1 until sidey) g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
   }
   
   val grid = new GridPanel(gridWidth, gridHeight) {
