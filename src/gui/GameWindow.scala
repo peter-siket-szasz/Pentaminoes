@@ -150,14 +150,15 @@ object GameWindow extends SimpleSwingApplication {
     listenTo(grid.mouse.clicks, grid.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
     reactions += {
-      /*case MouseClicked(grid, point, _, _, _)  => {
-        Game.gridColors (point.x / blockSize)(point.y / blockSize) = 3
-        grid.repaint()
+      case MouseClicked(grid, point, _, _, _)  => {
+        Game.placePentamino(point.x / blockSize, point.y / blockSize)
+        println(s"x: ${point.x / blockSize} y: ${point.y / blockSize}")
+        screen.repaint()
       }
-      case KeyPressed(grid, _, _, _) => {
-        Game.gridColors(Random.nextInt(gridWidth))(Random.nextInt(gridHeight)) = Random.nextInt(4)
-        grid.repaint()
-      }*/
+      //case KeyPressed(grid, _, _, _) => {
+      //  Game.gridColors(Random.nextInt(gridWidth))(Random.nextInt(gridHeight)) = Random.nextInt(4)
+      //  grid.repaint()
+      //}
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
         else if (source == flipVertically) Game.currentPentamino.flipVertical()

@@ -1,4 +1,5 @@
 package pentaminoes
+import Game.grid
 
 object Grid {
   
@@ -13,7 +14,7 @@ object Grid {
     text
   }
   
-  def colors: Vector[Vector[Int]] = this._colors.map(_.toVector).toVector
+  def colors: grid = this._colors.map(_.toVector).toVector
   
   def pentaminoes: Vector[Vector[Option[Pentamino]]] = this._pentaminoes.map(_.toVector).toVector
   
