@@ -46,7 +46,8 @@ object Tester extends App{
 	val list = Array.fill(24)(Pentamino.random(1, 2, 3, 4, 5))
 	println(list.mkString("\n"))
 	// */
-	
+  
+	/*
 	println(Game.currentPentamino)
 	println(Game.nextPentamino)
 	
@@ -54,8 +55,13 @@ object Tester extends App{
 	
 	println(Game.currentPentamino)
 	println(Game.nextPentamino)	
-	
-	
+	// */
+  
+  println(Grid)
+  println(Game.currentPentamino)
+  Game.placePentamino(3, 3)
+	println(Grid)
+	println(Game.currentPentamino)
 	
 	
 	
