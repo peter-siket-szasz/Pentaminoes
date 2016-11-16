@@ -26,7 +26,7 @@ object Grid {
   def placePentamino(x: Int, y: Int, pentamino: Pentamino): Unit = {
     val offset = pentamino.toVector.size/2
     for (xOffset <- -offset until offset; yOffset <- -offset until offset) {
-      this._colors(x+xOffset)(y+yOffset) = pentamino(xOffset,yOffset)
+      this._colors(y+yOffset)(x+xOffset) = pentamino(xOffset,yOffset)
     }
   }
   
