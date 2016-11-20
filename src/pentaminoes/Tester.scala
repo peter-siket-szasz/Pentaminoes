@@ -46,8 +46,8 @@ object Tester extends App{
 	val list = Array.fill(24)(Pentamino.random(1, 2, 3, 4, 5))
 	println(list.mkString("\n"))
 	// */
-  
-	/*
+	
+  /*
 	println(Game.currentPentamino)
 	println(Game.nextPentamino)
 	
@@ -55,13 +55,29 @@ object Tester extends App{
 	
 	println(Game.currentPentamino)
 	println(Game.nextPentamino)	
-	// */
+	*/
+	
+
+
+  /*
+	val list = Array.fill(24)(Pentamino.random(1, 2, 3, 4, 5))
+	println(list.mkString("\n"))
+	* */
+	
+  /*
+	val testi = Grid
+  testi.add(Pentamino.v(1,1,1,1,1), 3, 3)
+  testi.add(Pentamino.v(2,2,2,2,2), 0, 0)
+  testi.add(Pentamino.v(1,1,1,1,1), 3, 3)
+  testi.add(Pentamino.i(3,3,3,3,3), 0, 0)
+  testi.tulosta
+  testi.tulosta2
+  testi.remove(2,2)
+  testi.tulosta
+  testi.tulosta2
   
-  println(Grid)
-  println(Game.currentPentamino)
-  Game.placePentamino(3, 3)
-	println(Grid)
-	println(Game.currentPentamino)
+	// */
+
 	
 	
 	
