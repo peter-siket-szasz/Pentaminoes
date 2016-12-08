@@ -3,10 +3,10 @@ import Game.grid
 
 object Grid {
 
-  private val size = 7 //+ 4
-  private var _pentaminoes: Array[Array[Int]] = Array.ofDim[Int](size,size)
+  private val size = 7
+  private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
   private var _colors = Array.ofDim[Int](size, size)
-  private var pentaminoCounter = 0  
+  private var pentaminoCounter = 0
   
   
   override def toString = {
@@ -17,55 +17,55 @@ object Grid {
     text
   }
   def colors: Vector[Vector[Int]] = this._colors.map(_.toVector).toVector 
-  def pentaminoes: Vector[Vector[Int]] = this._pentaminoes.map(_.toVector).toVector 
+  def pentaminoes: Vector[Vector[Option[Pentamino]]] = this._pentaminoes.map(_.toVector).toVector
 
 
-  def colorAt(x: Int, y: Int) = this._colors(x)(y)
-  def pentaminoAt(x: Int, y: Int) = this._pentaminoes(x)(y)
+  def colorAt(x: Int, y: Int) = this._colors(y)(x)
+  def pentaminoAt(x: Int, y: Int) = this._pentaminoes(y)(x)
 
   def initialize(): Unit = { 
     this._colors = Array.ofDim[Int](size, size)
-    this._pentaminoes =  Array.ofDim[Int](size,size)
+    this._pentaminoes =  Array.ofDim[Option[Pentamino]](size,size)
   } 
   
   //jos annetussa kohdassa ei ole jotain väriarvoa (nollaa), palauttaa true, muuten false
   def canBePlaced(x: Int, y: Int): Boolean = colorAt(x, y) == 0
 
-  //jos kohta on jossain reunoilla, palauttaa true, muuten false
-  def isOutOfBounds(x: Int, y: Int): Boolean = x < 2 || y < 2 || x >= size - 2 || y >= size - 2
-
-  
+  //Tests if given coordinate is outside of the grid.
+  def isOutOfBounds(x: Int, y: Int): Boolean = x < 0 || y < 0 || x >= size || y >= size
   
   //lisää pentaminon ja sen värit arrayhyn jos kaikilla kohdilla on tyhjää ja väriä ei yritetä lisätä sallitun alueen ulkopuolelle 
-  def add(pent: Pentamino, x: Int, y: Int) = { // kohta (0,0) on sallitun alueen ulkopuolella
+  def add(pent: Pentamino, x: Int, y: Int): Boolean = { // kohta (0,0) on sallitun alueen ulkopuolella
 
     var foundError = false
 
-    for (x1 <- 0 to 4; y1 <- 0 to 4) {
-      if ((pent.toVector(x1)(y1) != 0) && (isOutOfBounds(x + x1, y + y1) || !canBePlaced(x + x1, y + y1))) {
+    for (x1 <- -2 to 2; y1 <- -2 to 2) {
+      if ((pent(y1,x1) != 0) && (isOutOfBounds(x + x1, y + y1) || !canBePlaced(x + x1, y + y1))) {
         foundError = true
+        return false
       }
     }
 
-    if (!foundError) pentaminoCounter += 1
-
-    for (x1 <- 0 to 4; y1 <- 0 to 4) {
-      if (!foundError) {
-        _colors(x + x1)(y + y1) += pent.toVector(x1)(y1)
-        if (_colors(x + x1)(y + y1) != 0) _pentaminoes(x + x1)(y + y1) += pentaminoCounter
+    if (!foundError) {
+      for (x1 <- -2 to 2; y1 <- -2 to 2) {
+        if (pent(y1,x1) != 0 && !isOutOfBounds(x + x1, y + y1)) {
+          _colors(y + y1)(x + x1) = pent(y1, x1)
+          _pentaminoes(y + y1)(x + x1) = Some(pent)
+        }
       }
     }
+    true
   }
 
   //poistaa annetussa kohdassa olevan pentaminon ja kaikki sen osat molemmista taulukoista
   def remove(x: Int, y: Int) { //kohta (0,0) on sallitun alueen ulkopuolella
     val poistettava = pentaminoAt(x, y)
 
-    if (poistettava != 0) {
+    if (poistettava != None) {
       for (x1 <- 0 until size; y1 <- 0 until size) {
         if (pentaminoAt(x1, y1) == poistettava) {
-          _pentaminoes(x1)(y1) = 0
-          _colors(x1)(y1) = 0
+          _pentaminoes(y1)(x1) = None
+          _colors(y1)(x1) = 0
         }
       }
     }

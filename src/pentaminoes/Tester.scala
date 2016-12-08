@@ -77,7 +77,12 @@ object Tester extends App{
   testi.tulosta2
   
 	// */
-
+  
+  println(Grid)
+  println(Game.currentPentamino)
+  Game.placePentamino(1, 2)
+	println(Grid)
+	println(Game.currentPentamino)
 	
 	
 	

@@ -29,11 +29,17 @@ object Game {
     Pentamino.random(randomInts(0), randomInts(1), randomInts(2), randomInts(3), randomInts(4))
   }
   
-  def placePentamino(x: Int, y: Int) = {
-    Grid.add(this.currentPentamino, x, y)
+  def placePentamino(x: Int, y: Int): Boolean = {
+    val isPlaced = Grid.add(this.currentPentamino, x, y)
     // TODO (after Grid object is ready) check consequenses
-    this.firstPentamino = this.secondPentamino
-    this.secondPentamino = this.randomPentamino
+    if (isPlaced) {
+      this.firstPentamino = this.secondPentamino
+      this.secondPentamino = this.randomPentamino
+      true
+    } else {
+      false
+    }
+    
   }
   
   // Returns true if current Pentamino can be placed to Grid's coordinates (x,y)
