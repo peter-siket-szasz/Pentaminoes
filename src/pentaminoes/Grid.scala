@@ -3,7 +3,7 @@ import Game.grid
 
 object Grid {
 
-  private val size = 7 + 4
+  private val size = 7 //+ 4
   private var _pentaminoes: Array[Array[Int]] = Array.ofDim[Int](size,size)
   private var _colors = Array.ofDim[Int](size, size)
   private var pentaminoCounter = 0  

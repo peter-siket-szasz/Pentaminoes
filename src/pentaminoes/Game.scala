@@ -30,7 +30,7 @@ object Game {
   }
   
   def placePentamino(x: Int, y: Int) = {
-    Grid.placePentamino(x, y, this.currentPentamino)
+    Grid.add(this.currentPentamino, x, y)
     // TODO (after Grid object is ready) check consequenses
     this.firstPentamino = this.secondPentamino
     this.secondPentamino = this.randomPentamino
