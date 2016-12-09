@@ -27,7 +27,10 @@ object Game {
   }
   
   def randomPentamino = {
-    val randomInts = Array.fill(5)(Random.nextInt(this.numberOfColors)+1) // Random int 1 - numberOfColors
+    var randomInts = Array.fill(5)(0)
+    while ( (randomInts.map(color => randomInts.count(_ == color))).reduceLeft(_ max _) >= 4 ) {
+      randomInts = Array.fill(5)(Random.nextInt(this.numberOfColors)+1) // Random int 1 - numberOfColors
+    }
     Pentamino.random(randomInts(0), randomInts(1), randomInts(2), randomInts(3), randomInts(4))
   }
   
