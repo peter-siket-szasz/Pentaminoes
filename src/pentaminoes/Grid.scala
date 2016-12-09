@@ -1,13 +1,15 @@
 package pentaminoes
 import Game.grid
+import scala.collection.mutable.Buffer
 
 object Grid {
 
   private val size = 7
+  private val minRowLength = 4
   private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
   private var _colors = Array.ofDim[Int](size, size)
   private var pentaminoCounter = 0
-  
+ // private var lastPentamino: Option[Pentamino] = None
   
   override def toString = {
     var text = ""
@@ -54,12 +56,14 @@ object Grid {
         }
       }
     }
+    
+    //lastPentamino = Some(pent)
     true
   }
 
   //poistaa annetussa kohdassa olevan pentaminon ja kaikki sen osat molemmista taulukoista
   def remove(x: Int, y: Int) { //kohta (0,0) on sallitun alueen ulkopuolella
-    val poistettava = pentaminoAt(x, y)
+    val poistettava = pentaminoAt(x, y) 
 
     if (poistettava != None) {
       for (x1 <- 0 until size; y1 <- 0 until size) {
@@ -70,6 +74,71 @@ object Grid {
       }
     }
 
+  }
+  
+  //Returns points gained and number of rows made. Removes Pentaminoes which are part of rows.
+  def checkRows(): (Int, Int) = {
+    
+    var points = 0.0
+    var rows = 0
+    val removeList = Buffer[(Int,Int)]()
+    
+    for (x0 <- 0 until size; y0 <- 0 until size) {
+      val rowsColor = colorAt(x0, y0)
+   
+      var horizontal1 = Buffer[(Int,Int)]()
+      var horizontal2 = Buffer[(Int,Int)]()
+      var vertical1 = Buffer[(Int,Int)]()
+      var vertical2 = Buffer[(Int,Int)]()
+      
+      if (rowsColor != 0) {
+        var x = 0
+        var y = 0
+        while ( !isOutOfBounds(x0 + x, y0) && colorAt(x0 + x, y0) == rowsColor ) {
+          horizontal1 += Tuple2(x0 + x, y0)
+          x += 1
+        }
+        
+        x = 0
+        y = 0
+        while ( !isOutOfBounds(x0 - x, y0) && colorAt(x0 - x, y0) == rowsColor ) {
+          horizontal2 += Tuple2(x0 - x, y0)
+          x += 1
+        }
+      
+        x = 0
+        y = 0
+        while ( !isOutOfBounds(x0, y0 + y) && colorAt(x0, y0 + y) == rowsColor ) {
+          vertical1 += Tuple2(x0, y0 + y)
+          y += 1
+        }
+        
+        x = 0
+        y = 0
+        while ( !isOutOfBounds(x0, y0 - y) && colorAt(x0, y0 - y) == rowsColor ) {
+          vertical2 += Tuple2(x0, y0 - y)
+          y += 1
+        }
+        
+        val horizontal = Math.max(0, horizontal1.size + horizontal2.size - 1) //x=0, y=0 is counted twice
+        val vertical = Math.max(0, vertical1.size + vertical2.size - 1)
+
+        if (horizontal >= minRowLength){  //Points are calculated for every square so row gets points for
+          points += Math.pow(2, horizontal - minRowLength) / horizontal //each of the squares it contains.
+          rows += 1
+          horizontal1.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
+          horizontal2.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
+        }
+        if (vertical >= minRowLength) {
+          points += Math.pow(2, vertical - minRowLength) / vertical
+          rows += 1
+          vertical1.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
+          vertical2.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
+        }
+      }
+    }
+    removeList.foreach{coordinate => remove(coordinate._1, coordinate._2)}
+    (points.round.toInt, rows)
   }
   
   /*

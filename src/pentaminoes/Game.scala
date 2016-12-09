@@ -9,6 +9,8 @@ object Game {
   private var numberOfColors = 2
   private var currentLevel = 1
   private var currentScore = 0
+  private var rows = 0 //Counts the number of moves which have scored points
+  private var nextLevelLimit = 5
   
   private var firstPentamino = this.randomPentamino
   private var secondPentamino = this.randomPentamino
@@ -29,22 +31,33 @@ object Game {
     Pentamino.random(randomInts(0), randomInts(1), randomInts(2), randomInts(3), randomInts(4))
   }
   
-  def placePentamino(x: Int, y: Int): Boolean = {
+  def placePentamino(x: Int, y: Int) = {
     val isPlaced = Grid.add(this.currentPentamino, x, y)
-    // TODO (after Grid object is ready) check consequenses
+
     if (isPlaced) {
+      val pointsAndRows = Grid.checkRows()
+      val points = pointsAndRows._1
+      val rows = pointsAndRows._2
+      
+      this.addScore(points)
+      
+      if (points > 0) {
+        this.rows += 1
+        if (this.isLevelUp) this.nextLevel()
+      }
+      
       this.firstPentamino = this.secondPentamino
       this.secondPentamino = this.randomPentamino
-      true
-    } else {
-      false
     }
     
+    println(this.currentScore)
+    println(this.rows + " / " + + this.nextLevelLimit)
+    println(this.currentLevel)
   }
   
   // Returns true if current Pentamino can be placed to Grid's coordinates (x,y)
   def canPlacePentamino(x: Int, y:Int): Boolean = {
-    ??? // TODO calls Grid's methods
+    Grid.canBePlaced(x, y)
   }
   
   // Returns a Vector of coordinates in which the current Pentamino (if played in coordinates (x,y)) overlaps another Pentamino
@@ -63,8 +76,11 @@ object Game {
   
   def nextLevel() = {
     this.currentLevel += 1
-    // TODO add other changes
+    this.numberOfColors += 1
+    this.nextLevelLimit *= 2
   }
+  
+  def isLevelUp = this.rows >= this.nextLevelLimit
   
   def score = this.currentScore
   

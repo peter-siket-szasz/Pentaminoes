@@ -26,7 +26,7 @@ object GameWindow extends SimpleSwingApplication {
   val counterclockwisePic = new ImageIcon("Icons/rotateCounterclockwise.png")
   
 
-  val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED)
+  val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE, Color.MAGENTA)
   
   def paintLinesAndSquares(g: Graphics2D, colors: grid, blockSize: Int) = {
     
