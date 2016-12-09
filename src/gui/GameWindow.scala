@@ -44,29 +44,37 @@ object GameWindow extends SimpleSwingApplication {
     for (y <- 1 until sidey) g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
   }
   
-  val grid = new GridPanel(gridWidth, gridHeight) {
-      
+  val grid = new GridPanel(gridWidth, gridHeight) {     
       preferredSize = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
       focusable = true
-
       override def paintComponent(g: Graphics2D) =  paintLinesAndSquares(g, Game.gridColors, blockSize)
-
     }
   
   val currentPentamino = new GridPanel(nextGridSize, nextGridSize) {
-    
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
-    
     override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.currentPentamino.toVector, smallBlockSize)
   }
   
   val nextPentamino = new GridPanel(nextGridSize, nextGridSize) {
-    
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
-    
     override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextPentamino.toVector, smallBlockSize)
+  }
+  
+  private def scoreText = "Score: " + Game.score
+  private def levelText = "Level: " + Game.level
+  private def updateLabels = {
+    score.text = scoreText
+    level.text = levelText
+  }
+  
+  val score = new Label{text = scoreText; preferredSize = new Dimension(100,45)}
+  val level = new Label{text = levelText; preferredSize = new Dimension(100,45)}
+  
+  val scoreBoard = new FlowPanel {
+    contents += score
+    contents += level
   }
   
   val flipHorizontally = new Button {
@@ -97,6 +105,10 @@ object GameWindow extends SimpleSwingApplication {
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
+    c.gridwidth = 6
+    layout(scoreBoard) = c
+    c.gridx = 0
+    c.gridy = 1
     c.gridwidth = 3
     c.gridheight = 3
     c.insets = new Insets(0,0,0,25)
@@ -104,27 +116,27 @@ object GameWindow extends SimpleSwingApplication {
     c.gridwidth = 1
     c.gridheight = 1
     c.gridx = 3
-    c.gridy = 0
+    c.gridy = 1
     c.insets = new Insets(0,100,0,0)
     layout(flipHorizontally) = c
     c.gridx = 5
-    c.gridy = 0
+    c.gridy = 1
     c.insets = new Insets(0,-100,0,0)
     layout(flipVertically) = c
     c.gridx = 3
-    c.gridy = 1
+    c.gridy = 2
     c.insets = new Insets(0,0,0,0)
     layout(rotateCounterclockwise) = c
     c.gridx = 5
-    c.gridy = 1
+    c.gridy = 2
     c.insets = new Insets(0,0,0,0)
     layout(rotateClockwise) = c
     c.gridx = 4
-    c.gridy = 1
+    c.gridy = 2
     c.insets = new Insets(25,-25,0,25)
     layout(currentPentamino) = c
     c.gridx = 4
-    c.gridy = 2
+    c.gridy = 3
     c.insets = new Insets(25,-50,0,0)
     layout(nextPentamino) = c
   }
@@ -135,7 +147,7 @@ object GameWindow extends SimpleSwingApplication {
     
     title = "Pentaminoes"
     resizable = false
-    location = new Point(200, 100)
+    location = new Point(200, 50)
     preferredSize = new Dimension(1000, 900)
 
     menuBar = new MenuBar {
@@ -151,6 +163,7 @@ object GameWindow extends SimpleSwingApplication {
       case MouseClicked(grid, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
         println(s"x: ${point.x / blockSize} y: ${point.y / blockSize}")
+        updateLabels
         screen.repaint()
       }
       //case KeyPressed(grid, _, _, _) => {
