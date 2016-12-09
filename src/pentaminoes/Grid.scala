@@ -80,7 +80,7 @@ object Grid {
   def checkRows(): (Int, Int) = {
     
     var points = 0.0
-    var rows = 0
+    var rows = 0.0
     val removeList = Buffer[(Int,Int)]()
     
     for (x0 <- 0 until size; y0 <- 0 until size) {
@@ -124,21 +124,22 @@ object Grid {
         val vertical = Math.max(0, vertical1.size + vertical2.size - 1)
 
         if (horizontal >= minRowLength){  //Points are calculated for every square so row gets points for
-          points += Math.pow(2, horizontal - minRowLength) / horizontal //each of the squares it contains.
-          rows += 1
+          points += 10 * Math.pow(2, horizontal - minRowLength) / horizontal //each of the squares it contains.
+          rows += 1.0 / horizontal
           horizontal1.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
           horizontal2.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
         }
         if (vertical >= minRowLength) {
-          points += Math.pow(2, vertical - minRowLength) / vertical
-          rows += 1
+          points += 10 * Math.pow(2, vertical - minRowLength) / vertical
+          rows += 1.0 / vertical
           vertical1.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
           vertical2.foreach{coordinates => removeList.append((coordinates._1, coordinates._2))}
         }
       }
     }
+    points *= rows //multiple rows earns more points
     removeList.foreach{coordinate => remove(coordinate._1, coordinate._2)}
-    (points.round.toInt, rows)
+    (points.round.toInt, rows.toInt)
   }
   
   /*

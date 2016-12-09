@@ -45,17 +45,13 @@ object Game {
       this.addScore(points)
       
       if (points > 0) {
-        this.rows += 1
-        if (this.isLevelUp) this.nextLevel()
+        this.rows += rows
+        while (this.isLevelUp) this.nextLevel() //Level up from level 1 to 3 is possible in theory
       }
       
       this.firstPentamino = this.secondPentamino
       this.secondPentamino = this.randomPentamino
     }
-    
-    println(this.currentScore)
-    println(this.rows + " / " + + this.nextLevelLimit)
-    println(this.currentLevel)
   }
   
   // Returns true if current Pentamino can be placed to Grid's coordinates (x,y)
@@ -91,6 +87,6 @@ object Game {
     this.currentScore += score
   }
   
-  
+  def rowsToNextLevel = this.rows + " / " + this.nextLevelLimit
   
 }

@@ -64,17 +64,21 @@ object GameWindow extends SimpleSwingApplication {
   
   private def scoreText = "Score: " + Game.score
   private def levelText = "Level: " + Game.level
+  private def rowsText = "Rows: " + Game.rowsToNextLevel
   private def updateLabels = {
     score.text = scoreText
     level.text = levelText
+    rows.text = rowsText
   }
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(100,45)}
   val level = new Label{text = levelText; preferredSize = new Dimension(100,45)}
+  val rows = new Label{text = rowsText; preferredSize = new Dimension(100,45)}
   
   val scoreBoard = new FlowPanel {
     contents += score
     contents += level
+    contents += rows
   }
   
   val flipHorizontally = new Button {
@@ -162,7 +166,6 @@ object GameWindow extends SimpleSwingApplication {
     reactions += {
       case MouseClicked(grid, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
-        println(s"x: ${point.x / blockSize} y: ${point.y / blockSize}")
         updateLabels
         screen.repaint()
       }
