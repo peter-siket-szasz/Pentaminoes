@@ -145,7 +145,7 @@ object GameWindow extends SimpleSwingApplication {
     layout(nextPentamino) = c
   }
   
-  val newGame = Action("New game") { Game.newGame; screen.repaint }
+  val newGame = Action("New game") { Game.newGame; updateLabels; screen.repaint }
     
   def top: MainFrame = new MainFrame {
     
