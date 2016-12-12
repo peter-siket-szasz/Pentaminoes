@@ -80,7 +80,7 @@ object GameWindow extends SimpleSwingApplication {
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
   val level = new Label{text = levelText; preferredSize = new Dimension(200,45); font = defaultFont}
-  val rows  = new Label{text = rowsText;  preferredSize = new Dimension(200,45); font = defaultFont}
+  val rows  = new Label{text = rowsText;  preferredSize = new Dimension(250,45); font = defaultFont}
   
   val scoreBoard = new FlowPanel {
     contents += score
@@ -120,6 +120,7 @@ object GameWindow extends SimpleSwingApplication {
     c.gridx = 0
     c.gridy = 0
     c.gridwidth = 6
+    c.insets = new Insets(0,0,25,0)
     layout(scoreBoard) = c
     c.gridx = 0
     c.gridy = 1
