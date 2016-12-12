@@ -8,6 +8,10 @@ import java.awt.Color
 import scala.swing.GridBagPanel._
 import scala.util.Random
 import javax.swing. { UIManager, ImageIcon }
+import java.awt.image.BufferedImage                                           
+import java.io.File                                                           
+import javax.imageio.ImageIO
+    
 
 object GameWindow extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
@@ -19,12 +23,15 @@ object GameWindow extends SimpleSwingApplication {
   val gridDimesnion = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
   val nextGridSize = 5
   val nextGridDimension = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
+  val windowSize = new Dimension(1000, 900)
   
   val verticalPic = new ImageIcon("Icons/flipVertical.png")
   val horizontalPic = new ImageIcon("Icons/flipHorizontal.png")
   val clockwisePic = new ImageIcon("Icons/rotateClockwise.png")
   val counterclockwisePic = new ImageIcon("Icons/rotateCounterclockwise.png")
+  val backgroundPic = ImageIO.read(new File("Icons/background.png"))
   
+  val defaultFont = new Font("Castellar", 0, 30)
 
   val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE, Color.MAGENTA)
   
@@ -71,9 +78,9 @@ object GameWindow extends SimpleSwingApplication {
     rows.text = rowsText
   }
   
-  val score = new Label{text = scoreText; preferredSize = new Dimension(100,45)}
-  val level = new Label{text = levelText; preferredSize = new Dimension(100,45)}
-  val rows = new Label{text = rowsText; preferredSize = new Dimension(100,45)}
+  val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
+  val level = new Label{text = levelText; preferredSize = new Dimension(200,45); font = defaultFont}
+  val rows  = new Label{text = rowsText;  preferredSize = new Dimension(200,45); font = defaultFont}
   
   val scoreBoard = new FlowPanel {
     contents += score
@@ -106,6 +113,9 @@ object GameWindow extends SimpleSwingApplication {
   }
     
   val screen = new GridBagPanel {
+    override def paintComponent(g: Graphics2D) = {
+      g.drawImage(backgroundPic, 0, 0, null)
+    }
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
@@ -152,7 +162,7 @@ object GameWindow extends SimpleSwingApplication {
     title = "Pentaminoes"
     resizable = false
     location = new Point(200, 50)
-    preferredSize = new Dimension(1000, 900)
+    preferredSize = windowSize
 
     menuBar = new MenuBar {
       contents += new Menu("Game") {
@@ -169,10 +179,6 @@ object GameWindow extends SimpleSwingApplication {
         updateLabels
         screen.repaint()
       }
-      //case KeyPressed(grid, _, _, _) => {
-      //  Game.gridColors(Random.nextInt(gridWidth))(Random.nextInt(gridHeight)) = Random.nextInt(4)
-      //  grid.repaint()
-      //}
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
         else if (source == flipVertically) Game.currentPentamino.flipVertical()
