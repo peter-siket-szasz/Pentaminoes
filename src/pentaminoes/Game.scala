@@ -9,6 +9,8 @@ object Game {
   private var numberOfColors = 2
   private var currentLevel = 1
   private var currentScore = 0
+  private var rows = 0 //Counts the number of moves which have scored points
+  private var nextLevelLimit = 5
   
   private var firstPentamino = this.randomPentamino
   private var secondPentamino = this.randomPentamino
@@ -25,20 +27,36 @@ object Game {
   }
   
   def randomPentamino = {
-    val randomInts = Array.fill(5)(Random.nextInt(this.numberOfColors)+1) // Random int 1 - numberOfColors
+    var randomInts = Array.fill(5)(0)
+    while ( (randomInts.map(color => randomInts.count(_ == color))).reduceLeft(_ max _) >= 4 ) {
+      randomInts = Array.fill(5)(Random.nextInt(this.numberOfColors)+1) // Random int 1 - numberOfColors
+    }
     Pentamino.random(randomInts(0), randomInts(1), randomInts(2), randomInts(3), randomInts(4))
   }
   
   def placePentamino(x: Int, y: Int) = {
-    Grid.placePentamino(x, y, this.currentPentamino)
-    // TODO (after Grid object is ready) check consequenses
-    this.firstPentamino = this.secondPentamino
-    this.secondPentamino = this.randomPentamino
+    val isPlaced = Grid.add(this.currentPentamino, x, y)
+
+    if (isPlaced) {
+      val pointsAndRows = Grid.checkRows()
+      val points = pointsAndRows._1
+      val rows = pointsAndRows._2
+      
+      this.addScore(points)
+      
+      if (points > 0) {
+        this.rows += rows
+        while (this.isLevelUp) this.nextLevel() //Level up from level 1 to 3 is possible in theory
+      }
+      
+      this.firstPentamino = this.secondPentamino
+      this.secondPentamino = this.randomPentamino
+    }
   }
   
   // Returns true if current Pentamino can be placed to Grid's coordinates (x,y)
   def canPlacePentamino(x: Int, y:Int): Boolean = {
-    ??? // TODO calls Grid's methods
+    Grid.canBePlaced(x, y)
   }
   
   // Returns a Vector of coordinates in which the current Pentamino (if played in coordinates (x,y)) overlaps another Pentamino
@@ -57,8 +75,11 @@ object Game {
   
   def nextLevel() = {
     this.currentLevel += 1
-    // TODO add other changes
+    this.numberOfColors += 1
+    this.nextLevelLimit *= 2
   }
+  
+  def isLevelUp = this.rows >= this.nextLevelLimit
   
   def score = this.currentScore
   
@@ -66,6 +87,6 @@ object Game {
     this.currentScore += score
   }
   
-  
+  def rowsToNextLevel = this.rows + " / " + this.nextLevelLimit
   
 }
