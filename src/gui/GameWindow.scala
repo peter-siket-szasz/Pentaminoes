@@ -49,6 +49,24 @@ object GameWindow extends SimpleSwingApplication {
     g.setColor(Color.BLACK)
     for (x <- 1 until sidex) g.drawLine(x * blockSize, 0, x * blockSize, sidey * blockSize)
     for (y <- 1 until sidey) g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
+    paintEdges(g, Grid.edges)
+    
+    
+  }
+  
+  def paintEdges(g: Graphics2D, edges: Vector[Vector[Vector[Boolean]]]) = {
+    
+    val height = edges(0).size
+    val width = edges.size
+    g.setColor(Color.RED)
+    
+    for (row <- 0 until height) {
+      for (col <- 0 until width) {
+        if (edges(row)(col)(0)) g.drawLine(col * blockSize, row * blockSize, (col + 1) * blockSize, row * blockSize)
+        if (edges(row)(col)(1)) g.drawLine(col * blockSize, row * blockSize, col * blockSize, (row + 1) * blockSize)
+      }
+    }
+    
   }
   
   val grid = new GridPanel(gridWidth, gridHeight) {     

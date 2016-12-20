@@ -8,6 +8,7 @@ object Grid {
   private val minRowLength = 4
   private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
   private var _colors = Array.ofDim[Int](size, size)
+  private var _edges = Array.ofDim[Boolean](size, size, 2) //First boolean is top line, second one is left
   private var pentaminoCounter = 0
  // private var lastPentamino: Option[Pentamino] = None
   
@@ -20,7 +21,14 @@ object Grid {
   }
   def colors: Vector[Vector[Int]] = this._colors.map(_.toVector).toVector 
   def pentaminoes: Vector[Vector[Option[Pentamino]]] = this._pentaminoes.map(_.toVector).toVector
-
+  def edges: Vector[Vector[Vector[Boolean]]] = this._edges.map(_.map(_.toVector).toVector).toVector
+  
+  ////////
+  _edges(0)(0)(0) = true
+  _edges(0)(0)(1) = true
+  _edges(3)(3)(1) = true
+  _edges(3)(3)(0) = true
+  ///////
 
   def colorAt(x: Int, y: Int) = this._colors(y)(x)
   def pentaminoAt(x: Int, y: Int) = this._pentaminoes(y)(x)
