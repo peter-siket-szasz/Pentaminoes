@@ -62,13 +62,18 @@ object GameWindow extends SimpleSwingApplication {
     
     for (row <- 0 until height) {
       for (col <- 0 until width) {
-        if (edges(row)(col)(0) && row != 0) 
-          g.drawLine(col * blockSize, row * blockSize, (col + 1) * blockSize, row * blockSize)
-        if (edges(row)(col)(1) && col !=0) 
-          g.drawLine(col * blockSize, row * blockSize, col * blockSize, (row + 1) * blockSize)
+        if (edges(row)(col)(0) && row != 0) {
+          for (i <- -1 to 1) {
+            g.drawLine(col * blockSize, row * blockSize + i, (col + 1) * blockSize, row * blockSize + i)
+          }
+        }
+        if (edges(row)(col)(1) && col !=0) {
+          for (i <- -1 to 1) {
+            g.drawLine(col * blockSize + i, row * blockSize, col * blockSize + i, (row + 1) * blockSize)
+          }
+        }
       }
     }
-    
   }
   
   val grid = new GridPanel(gridWidth, gridHeight) {     
