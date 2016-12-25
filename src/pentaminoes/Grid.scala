@@ -8,6 +8,7 @@ object Grid {
   private val minRowLength = 4
   private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
   private var _colors = Array.ofDim[Int](size, size)
+  private var _edges = Array.ofDim[Boolean](size, size, 2) //First boolean is top line, second one is left
   private var pentaminoCounter = 0
  // private var lastPentamino: Option[Pentamino] = None
   
@@ -20,7 +21,7 @@ object Grid {
   }
   def colors: Vector[Vector[Int]] = this._colors.map(_.toVector).toVector 
   def pentaminoes: Vector[Vector[Option[Pentamino]]] = this._pentaminoes.map(_.toVector).toVector
-
+  def edges: Vector[Vector[Vector[Boolean]]] = this._edges.map(_.map(_.toVector).toVector).toVector
 
   def colorAt(x: Int, y: Int) = this._colors(y)(x)
   def pentaminoAt(x: Int, y: Int) = this._pentaminoes(y)(x)
@@ -28,6 +29,7 @@ object Grid {
   def initialize(): Unit = { 
     this._colors = Array.ofDim[Int](size, size)
     this._pentaminoes =  Array.ofDim[Option[Pentamino]](size,size)
+    this._edges = Array.ofDim[Boolean](size, size, 2)
   } 
   
   //jos annetussa kohdassa ei ole jotain väriarvoa (nollaa), palauttaa true, muuten false
@@ -50,6 +52,15 @@ object Grid {
 
     if (!foundError) {
       for (x1 <- -2 to 2; y1 <- -2 to 2) {
+        if (pent.edgesApply(y1,x1) != 0 && !isOutOfBounds(x + x1, y + y1)) {
+          pent.edgesApply(y1, x1).foreach {
+            direction => 
+              if (direction == 1 && x + x1 + 1 < this.size) this._edges(y + y1)(x + x1 + 1)(1) = true
+              if (direction == 2) this._edges(y + y1)(x + x1)(0) = true
+              if (direction == 3) this._edges(y + y1)(x + x1)(1) = true
+              if (direction == 4 && y + y1 + 1 < this.size) this._edges(y + y1 + 1)(x + x1)(0) = true
+            }
+        }
         if (pent(y1,x1) != 0 && !isOutOfBounds(x + x1, y + y1)) {
           _colors(y + y1)(x + x1) = pent(y1, x1)
           _pentaminoes(y + y1)(x + x1) = Some(pent)
@@ -57,7 +68,6 @@ object Grid {
       }
     }
     
-    //lastPentamino = Some(pent)
     true
   }
 
@@ -66,14 +76,22 @@ object Grid {
     val poistettava = pentaminoAt(x, y) 
 
     if (poistettava != None) {
-      for (x1 <- 0 until size; y1 <- 0 until size) {
+      for (x1 <- 0 until this.size; y1 <- 0 until this.size) {
         if (pentaminoAt(x1, y1) == poistettava) {
+          if ( !this.isOutOfBounds(x1+1, y1) && colorAt(x1 + 1, y1)==0 )
+            this._edges(y1)(x1 + 1)(1) = false
+          if ( this.isOutOfBounds(x1, y1-1) || colorAt(x1, y1-1)==0 )
+            this._edges(y1)(x1)(0) = false
+          if ( this.isOutOfBounds(x1-1, y1) || colorAt(x1 - 1, y1)==0 )
+            this._edges(y1)(x1)(1) = false
+          if ( !this.isOutOfBounds(x1, y1+1) && colorAt(x1, y1+1 )==0 )
+            this._edges(y1 + 1)(x1)(0) = false
+            
           _pentaminoes(y1)(x1) = None
           _colors(y1)(x1) = 0
         }
       }
     }
-
   }
   
   //Returns points gained and number of rows made. Removes Pentaminoes which are part of rows.

@@ -35,7 +35,7 @@ object GameWindow extends SimpleSwingApplication {
 
   val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE, Color.MAGENTA)
   
-  def paintLinesAndSquares(g: Graphics2D, colors: grid, blockSize: Int) = {
+  def paintLinesAndSquares(g: Graphics2D, colors: grid, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
     
     val sidex = colors(0).size
     val sidey = colors.size
@@ -49,24 +49,52 @@ object GameWindow extends SimpleSwingApplication {
     g.setColor(Color.BLACK)
     for (x <- 1 until sidex) g.drawLine(x * blockSize, 0, x * blockSize, sidey * blockSize)
     for (y <- 1 until sidey) g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
+    paintEdges(g, edges, blockSize)
+    
+    
+  }
+  
+  def paintEdges(g: Graphics2D, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
+    
+    val height = edges(0).size
+    val width = edges.size
+    g.setColor(Color.BLACK)
+    
+    for (row <- 0 until height) {
+      for (col <- 0 until width) {
+        if (edges(row)(col)(0) && row != 0) {
+          for (i <- -1 to 1) {
+            g.drawLine(col * blockSize, row * blockSize + i, (col + 1) * blockSize, row * blockSize + i)
+          }
+        }
+        if (edges(row)(col)(1) && col !=0) {
+          for (i <- -1 to 1) {
+            g.drawLine(col * blockSize + i, row * blockSize, col * blockSize + i, (row + 1) * blockSize)
+          }
+        }
+      }
+    }
   }
   
   val grid = new GridPanel(gridWidth, gridHeight) {     
       preferredSize = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
       focusable = true
-      override def paintComponent(g: Graphics2D) =  paintLinesAndSquares(g, Game.gridColors, blockSize)
+      override def paintComponent(g: Graphics2D) = 
+        paintLinesAndSquares(g, Game.gridColors, Grid.edges, blockSize)
     }
   
   val currentPentamino = new GridPanel(nextGridSize, nextGridSize) {
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
-    override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.currentPentamino.toVector, smallBlockSize)
+    override def paintComponent(g: Graphics2D) = 
+      paintLinesAndSquares(g, Game.currentPentamino.toVector, Grid.edges, smallBlockSize)
   }
   
   val nextPentamino = new GridPanel(nextGridSize, nextGridSize) {
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
-    override def paintComponent(g: Graphics2D) = paintLinesAndSquares(g, Game.nextPentamino.toVector, smallBlockSize)
+    override def paintComponent(g: Graphics2D) = 
+      paintLinesAndSquares(g, Game.nextPentamino.toVector, Grid.edges, smallBlockSize)
   }
   
   private def scoreText = "Score: " + Game.score
@@ -80,7 +108,7 @@ object GameWindow extends SimpleSwingApplication {
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
   val level = new Label{text = levelText; preferredSize = new Dimension(200,45); font = defaultFont}
-  val rows  = new Label{text = rowsText;  preferredSize = new Dimension(200,45); font = defaultFont}
+  val rows  = new Label{text = rowsText;  preferredSize = new Dimension(250,45); font = defaultFont}
   
   val scoreBoard = new FlowPanel {
     contents += score
@@ -120,6 +148,7 @@ object GameWindow extends SimpleSwingApplication {
     c.gridx = 0
     c.gridy = 0
     c.gridwidth = 6
+    c.insets = new Insets(0,0,25,0)
     layout(scoreBoard) = c
     c.gridx = 0
     c.gridy = 1
