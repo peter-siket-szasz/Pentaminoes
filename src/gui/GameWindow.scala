@@ -58,7 +58,7 @@ object GameWindow extends SimpleSwingApplication {
     
     val height = edges(0).size
     val width = edges.size
-    g.setColor(Color.RED)
+    g.setColor(Color.BLACK)
     
     for (row <- 0 until height) {
       for (col <- 0 until width) {
