@@ -19,6 +19,8 @@ object Game {
     this.numberOfColors = 2
     this.currentLevel = 1
     this.currentScore = 0
+    this.rows = 0
+    this.nextLevelLimit = 5
     
     this.firstPentamino = this.randomPentamino
     this.secondPentamino = this.randomPentamino
@@ -52,7 +54,11 @@ object Game {
       this.firstPentamino = this.secondPentamino
       this.secondPentamino = this.randomPentamino
     }
+    
+    if ( ! this.possibleMovesLeft) this.newGame()
   }
+  
+  def possibleMovesLeft = Grid.checkIfMovesPossible(this.currentPentamino)
   
   // Returns true if current Pentamino can be placed to Grid's coordinates (x,y)
   def canPlacePentamino(x: Int, y:Int): Boolean = {
