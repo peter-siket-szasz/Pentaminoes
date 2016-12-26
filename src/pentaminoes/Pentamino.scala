@@ -23,13 +23,13 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
   
   def twoBooleanEdges: Vector[Vector[Vector[Boolean]]] = {
     val edgesArray = Array.fill(Pentamino.size, Pentamino.size, 2)(false)
-    for (x <- -2 to 2; y <- -2 to 2) {
-      this.edgesCentered(y, x).foreach {
+    for (x <- 0 until 5; y <- 0 until 5) {
+      this.edgesVector(y)(x).foreach {
         direction => 
-          if (direction == 1 && x + 1 <= 2) edgesArray(y)(x + 1)(1) = true
+          if (direction == 1 && x + 1 < 5) edgesArray(y)(x + 1)(1) = true
           if (direction == 2) edgesArray(y)(x)(0) = true
           if (direction == 3) edgesArray(y)(x)(1) = true
-          if (direction == 4 && y + 1 <= 2) edgesArray(y + 1)(x)(0) = true
+          if (direction == 4 && y + 1 < 5) edgesArray(y + 1)(x)(0) = true
       }
     }
     edgesArray.map(_.map(_.toVector).toVector).toVector
