@@ -19,7 +19,7 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
   
   def edgesVector: Vector[Vector[Vector[Int]]] = this.edges.map(_.map(_.toVector).toVector).toVector
   
-  def edgesApply(x: Int, y: Int):Vector[Int] = this.edgesVector(x+2)(y+2)
+  def edgesCentered(x: Int, y: Int):Vector[Int] = this.edgesVector(x+2)(y+2)
   
   /* Rotate methods and flip methods and randomRotation all 
   both make changes to original Pentamino and return the modified version of it */
@@ -172,7 +172,7 @@ object Pentamino {
                       0, 0, c1,c2,c3,
                       0, 0, c4,0, 0,
                       0, 0, c5,0, 0),
-               Array( Array(2,3), Array(2,4), Array(2,4), Array(1,3), Array(1,3) )
+               Array( Array(2,3), Array(2,4), Array(1,2,4), Array(1,3), Array(1,3,4) )
              )
   }
   
@@ -202,7 +202,7 @@ object Pentamino {
                       0, 0, c3,0, 0,
                       0, 0, c4,0, 0,
                       0, 0, c5,0, 0),
-               Array( Array(1,3), Array(1,3), Array(1,3), Array(1,3), Array(1,3) )
+               Array( Array(1,2,3), Array(1,3), Array(1,3), Array(1,3), Array(1,3,4) )
              )
   }
   
@@ -252,7 +252,7 @@ object Pentamino {
                       0, 0, c3,0, 0,
                       0, 0, c4,0, 0,
                       0, 0, c5,0, 0),
-               Array( Array(2,3), Array(1,2,4), Array(1,3), Array(1,3), Array(1,3) )
+               Array( Array(2,3), Array(1,2,4), Array(1,3), Array(1,3), Array(1,3,4) )
              )
   }
   

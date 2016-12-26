@@ -48,14 +48,14 @@ object Grid {
   }
   
   //lisää pentaminon ja sen värit arrayhyn jos kaikilla kohdilla on tyhjää ja väriä ei yritetä lisätä sallitun alueen ulkopuolelle 
-  def add(pent: Pentamino, x: Int, y: Int): Boolean = { // kohta (0,0) on sallitun alueen ulkopuolella
+  def add(pent: Pentamino, x: Int, y: Int): Boolean = {
 
     var pentaminoCanBePlace = this.pentaminoCanBePlaced(x, y, pent)
 
     if (pentaminoCanBePlace) {
       for (x1 <- -2 to 2; y1 <- -2 to 2) {
-        if (pent.edgesApply(y1,x1) != 0 && !isOutOfBounds(x + x1, y + y1)) {
-          pent.edgesApply(y1, x1).foreach {
+        if (pent.edgesCentered(y1,x1) != 0 && !isOutOfBounds(x + x1, y + y1)) {
+          pent.edgesCentered(y1, x1).foreach {
             direction => 
               if (direction == 1 && x + x1 + 1 < this.size) this._edges(y + y1)(x + x1 + 1)(1) = true
               if (direction == 2) this._edges(y + y1)(x + x1)(0) = true
@@ -165,16 +165,18 @@ object Grid {
   
   def checkIfMovesPossible(pentamino: Pentamino): Boolean = {
     
+    var posibleMoveFound = false
+    
     for (x <- 0 to this.size; y <- 0 to this.size) {
       for (rotation <- 1 to 4) {
         for (flip <- 1 to 2) {
-          if (this.pentaminoCanBePlaced(x, y, pentamino)) return true
+          if (this.pentaminoCanBePlaced(x, y, pentamino)) posibleMoveFound = true
           pentamino.flipHorizontal()
         }
         pentamino.rotateClockwise()
       }
     }
-    false
+    posibleMoveFound
   }
 
   
