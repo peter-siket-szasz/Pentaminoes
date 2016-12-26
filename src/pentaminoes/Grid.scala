@@ -4,7 +4,7 @@ import scala.collection.mutable.Buffer
 
 object Grid {
 
-  private val size = 7
+  val size = 7
   private val minRowLength = 4
   private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
   private var _colors = Array.ofDim[Int](size, size)

@@ -21,6 +21,20 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
   
   def edgesCentered(x: Int, y: Int):Vector[Int] = this.edgesVector(x+2)(y+2)
   
+  def twoBooleanEdges: Vector[Vector[Vector[Boolean]]] = {
+    val edgesArray = Array.fill(Pentamino.size, Pentamino.size, 2)(false)
+    for (x <- -2 to 2; y <- -2 to 2) {
+      this.edgesCentered(y, x).foreach {
+        direction => 
+          if (direction == 1 && x + 1 <= 2) edgesArray(y)(x + 1)(1) = true
+          if (direction == 2) edgesArray(y)(x)(0) = true
+          if (direction == 3) edgesArray(y)(x)(1) = true
+          if (direction == 4 && y + 1 <= 2) edgesArray(y + 1)(x)(0) = true
+      }
+    }
+    edgesArray.map(_.map(_.toVector).toVector).toVector
+  }
+  
   /* Rotate methods and flip methods and randomRotation all 
   both make changes to original Pentamino and return the modified version of it */
 
@@ -93,6 +107,8 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
 }
 
 object Pentamino {
+  
+  val size = 5
   
   def pentaminoes: Vector[Char] = Vector('p', 'x', 'f', 'v', 'w', 'y', 'i', 't', 'z', 'u', 'n', 'l')
   
