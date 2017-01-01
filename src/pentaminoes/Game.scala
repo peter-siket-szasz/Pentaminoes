@@ -15,6 +15,8 @@ object Game {
   private var firstPentamino = this.randomPentamino
   private var secondPentamino = this.randomPentamino
   
+  private var _gameOn = false
+  
   def newGame() = {
     this.numberOfColors = 2
     this.currentLevel = 1
@@ -24,6 +26,8 @@ object Game {
     
     this.firstPentamino = this.randomPentamino
     this.secondPentamino = this.randomPentamino
+    
+    _gameOn = true
     
     Grid.initialize()
   }
@@ -55,8 +59,10 @@ object Game {
       this.secondPentamino = this.randomPentamino
     }
     
-    if ( ! this.possibleMovesLeft) this.newGame()
+    if ( ! this.possibleMovesLeft) this._gameOn = false
   }
+
+  def gameOn = this._gameOn
   
   def possibleMovesLeft = Grid.checkIfMovesPossible(this.currentPentamino)
   
