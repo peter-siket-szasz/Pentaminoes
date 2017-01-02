@@ -7,14 +7,35 @@ import scala.collection.mutable.Buffer
 
 object Highscore {
   
-  val fileName = "highscores.txt"
-  val listLenght = 10
+  private val fileName = "highscores.txt"
+  private val listLenght = 10
+  private var highscoreList = this.readListFromFile
+  private var minScore = this.minimumScore(this.highscoreList)
   
   def initialize() = {
-    this.writeList(Vector())
+    this.writeListToFile(Vector())
   }
   
-  def getList: Vector[Option[Tuple4[String,Int,Int,Int]]] = {
+  def getHighscoreList = {
+    this.highscoreList
+  }
+  
+  def setNewScore(name: String, score: Int, level: Int, rows: Int): Int = {
+    val oldList = this.getHighscoreList
+    val newList = oldList.toBuffer
+    newList += Some(Tuple4(name, score, level, rows))
+    val newListVector = this.arrange(newList.toVector).take(this.listLenght)
+    this.writeListToFile(newListVector)
+    this.findPosition(name, score, level, rows)
+  }
+  
+  def isScoreEnough(score: Int, level: Int, rows: Int): Boolean = {
+    this.arrange(Vector(Option(this.minScore), Option(Tuple4("",score,level,rows))))(1) != Tuple4("",score,level,rows)
+  }
+  
+  
+  
+  private def readListFromFile: Vector[Option[Tuple4[String,Int,Int,Int]]] = {
     val file = Source.fromFile(fileName)
     val highscores = Buffer[Option[Tuple4[String,Int,Int,Int]]]()
     
@@ -30,51 +51,32 @@ object Highscore {
     }
     highscores.toVector
   }
-
-  def newScore(name: String, score: Int, level: Int, rows: Int): Int = {
-    val oldList = this.getList
-    val newList = oldList.toBuffer
-    newList += Some(Tuple4(name, score, level, rows))
-    val newListVector = this.arrange(newList.toVector).take(this.listLenght)
-    this.writeList(newListVector)
-    this.findPosition(name, score, level, rows)
-  }
   
-  def writeList(list: Vector[Option[Tuple4[String,Int,Int,Int]]]) = {
+  private def writeListToFile(list: Vector[Option[Tuple4[String,Int,Int,Int]]]) = {
     val file = new PrintWriter(fileName)
     for (row <- list) {
       if (row.isDefined) file.println(row.get._1 + " " + row.get._2 + " " + row.get._3 + " " + row.get._4)
     }
     file.close()
+    this.updateVariables()
   }
   
-  def findPosition(name: String, score: Int, level: Int, rows: Int): Int = {
-    val list = this.getList
-    var position = this.listLenght
-    while (position > 0 && list(position-1) != Some(Tuple4(name, score, level, rows))) {
-      position -= 1
-    }
-    position
+  private def findPosition(name: String, score: Int, level: Int, rows: Int): Int = {
+    10 - this.highscoreList.reverse.indexOf(Some(Tuple4(name, score, level, rows)))
+  } 
+  
+  private def updateVariables() = {
+    highscoreList = this.readListFromFile
+    minScore = this.minimumScore(this.highscoreList)
   }
   
-  def arrange(list: Vector[Option[Tuple4[String,Int,Int,Int]]]): Vector[Option[Tuple4[String,Int,Int,Int]]] = {
+  private def minimumScore(list: Vector[Option[Tuple4[String,Int,Int,Int]]]) = {
+    list.last.getOrElse(Tuple4("",0,0,0))
+  }
+  
+  private def arrange(list: Vector[Option[Tuple4[String,Int,Int,Int]]]): Vector[Option[Tuple4[String,Int,Int,Int]]] = {
     val arrangedList = list.map(_.getOrElse(Tuple4("",0,0,0))).sortWith(_._4 > _._4).sortWith(_._3 > _._3).sortWith(_._2 > _._2)
     arrangedList.map({tuple: Tuple4[String,Int,Int,Int] => if (tuple == ("",0,0,0)) None; else Some(tuple) })
   }
-  
-  /* For testing
-  var list = this.getList
-  list.foreach(println(_))
-  println()
-  this.arrange(list).foreach(println(_))
-  println("___________________________________________________")
-  this.initialize()
-  list = this.getList
-  list.foreach(println(_))
-  println("___________________________________________________")
-  println(this.newScore("miro",87,51,3))
-  list = this.getList
-  list.foreach(println(_))
-  */
   
 }
