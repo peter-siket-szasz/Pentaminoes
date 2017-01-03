@@ -87,14 +87,14 @@ object GameWindow extends SimpleSwingApplication {
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
     override def paintComponent(g: Graphics2D) = 
-      paintLinesAndSquares(g, Game.currentPentamino.toVector, Grid.edges, smallBlockSize)
+      paintLinesAndSquares(g, Game.currentPentamino.toVector, Game.currentPentamino.twoBooleanEdges, smallBlockSize)
   }
   
   val nextPentamino = new GridPanel(nextGridSize, nextGridSize) {
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
     focusable = false
     override def paintComponent(g: Graphics2D) = 
-      paintLinesAndSquares(g, Game.nextPentamino.toVector, Grid.edges, smallBlockSize)
+      paintLinesAndSquares(g, Game.nextPentamino.toVector, Game.nextPentamino.twoBooleanEdges, smallBlockSize)
   }
   
   private def scoreText = "Score: " + Game.score

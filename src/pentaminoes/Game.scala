@@ -15,13 +15,19 @@ object Game {
   private var firstPentamino = this.randomPentamino
   private var secondPentamino = this.randomPentamino
   
+  private var _gameOn = false
+  
   def newGame() = {
     this.numberOfColors = 2
     this.currentLevel = 1
     this.currentScore = 0
+    this.rows = 0
+    this.nextLevelLimit = 5
     
     this.firstPentamino = this.randomPentamino
     this.secondPentamino = this.randomPentamino
+    
+    _gameOn = true
     
     Grid.initialize()
   }
@@ -52,7 +58,20 @@ object Game {
       this.firstPentamino = this.secondPentamino
       this.secondPentamino = this.randomPentamino
     }
+    
+    if ( ! this.possibleMovesLeft) {
+
+      if (Highscore.isScoreEnough(this.currentScore,this.currentLevel,this.rows)){
+        println("You are " + Highscore.setNewScore("testi",this.currentScore,this.currentLevel,this.rows) + " in highscore list.")
+      } else println("You don't have enough points. Better luck next time.")
+      
+      this._gameOn = false
+    }
   }
+
+  def gameOn = this._gameOn
+  
+  def possibleMovesLeft = Grid.checkIfMovesPossible(this.currentPentamino)
   
   // Returns true if current Pentamino can be placed to Grid's coordinates (x,y)
   def canPlacePentamino(x: Int, y:Int): Boolean = {

@@ -19,7 +19,21 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
   
   def edgesVector: Vector[Vector[Vector[Int]]] = this.edges.map(_.map(_.toVector).toVector).toVector
   
-  def edgesApply(x: Int, y: Int):Vector[Int] = this.edgesVector(x+2)(y+2)
+  def edgesCentered(x: Int, y: Int):Vector[Int] = this.edgesVector(x+2)(y+2)
+  
+  def twoBooleanEdges: Vector[Vector[Vector[Boolean]]] = {
+    val edgesArray = Array.fill(Pentamino.size, Pentamino.size, 2)(false)
+    for (x <- 0 until 5; y <- 0 until 5) {
+      this.edgesVector(y)(x).foreach {
+        direction => 
+          if (direction == 1 && x + 1 < 5) edgesArray(y)(x + 1)(1) = true
+          if (direction == 2) edgesArray(y)(x)(0) = true
+          if (direction == 3) edgesArray(y)(x)(1) = true
+          if (direction == 4 && y + 1 < 5) edgesArray(y + 1)(x)(0) = true
+      }
+    }
+    edgesArray.map(_.map(_.toVector).toVector).toVector
+  }
   
   /* Rotate methods and flip methods and randomRotation all 
   both make changes to original Pentamino and return the modified version of it */
@@ -93,6 +107,8 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
 }
 
 object Pentamino {
+  
+  val size = 5
   
   def pentaminoes: Vector[Char] = Vector('p', 'x', 'f', 'v', 'w', 'y', 'i', 't', 'z', 'u', 'n', 'l')
   
@@ -172,7 +188,7 @@ object Pentamino {
                       0, 0, c1,c2,c3,
                       0, 0, c4,0, 0,
                       0, 0, c5,0, 0),
-               Array( Array(2,3), Array(2,4), Array(2,4), Array(1,3), Array(1,3) )
+               Array( Array(2,3), Array(2,4), Array(1,2,4), Array(1,3), Array(1,3,4) )
              )
   }
   
@@ -202,7 +218,7 @@ object Pentamino {
                       0, 0, c3,0, 0,
                       0, 0, c4,0, 0,
                       0, 0, c5,0, 0),
-               Array( Array(1,3), Array(1,3), Array(1,3), Array(1,3), Array(1,3) )
+               Array( Array(1,2,3), Array(1,3), Array(1,3), Array(1,3), Array(1,3,4) )
              )
   }
   
@@ -252,7 +268,7 @@ object Pentamino {
                       0, 0, c3,0, 0,
                       0, 0, c4,0, 0,
                       0, 0, c5,0, 0),
-               Array( Array(2,3), Array(1,2,4), Array(1,3), Array(1,3), Array(1,3) )
+               Array( Array(2,3), Array(1,2,4), Array(1,3), Array(1,3), Array(1,3,4) )
              )
   }
   

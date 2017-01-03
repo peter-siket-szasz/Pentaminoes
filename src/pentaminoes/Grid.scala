@@ -4,7 +4,7 @@ import scala.collection.mutable.Buffer
 
 object Grid {
 
-  private val size = 7
+  val size = 7
   private val minRowLength = 4
   private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
   private var _colors = Array.ofDim[Int](size, size)
@@ -38,22 +38,24 @@ object Grid {
   //Tests if given coordinate is outside of the grid.
   def isOutOfBounds(x: Int, y: Int): Boolean = x < 0 || y < 0 || x >= size || y >= size
   
-  //lisää pentaminon ja sen värit arrayhyn jos kaikilla kohdilla on tyhjää ja väriä ei yritetä lisätä sallitun alueen ulkopuolelle 
-  def add(pent: Pentamino, x: Int, y: Int): Boolean = { // kohta (0,0) on sallitun alueen ulkopuolella
-
-    var foundError = false
-
+  def pentaminoCanBePlaced(x: Int, y: Int, pentamino: Pentamino): Boolean = {
     for (x1 <- -2 to 2; y1 <- -2 to 2) {
-      if ((pent(y1,x1) != 0) && (isOutOfBounds(x + x1, y + y1) || !canBePlaced(x + x1, y + y1))) {
-        foundError = true
+      if ((pentamino(y1,x1) != 0) && (isOutOfBounds(x + x1, y + y1) || !canBePlaced(x + x1, y + y1))) {
         return false
       }
     }
+    true
+  }
+  
+  //lisää pentaminon ja sen värit arrayhyn jos kaikilla kohdilla on tyhjää ja väriä ei yritetä lisätä sallitun alueen ulkopuolelle 
+  def add(pent: Pentamino, x: Int, y: Int): Boolean = {
 
-    if (!foundError) {
+    var pentaminoCanBePlace = this.pentaminoCanBePlaced(x, y, pent)
+
+    if (pentaminoCanBePlace) {
       for (x1 <- -2 to 2; y1 <- -2 to 2) {
-        if (pent.edgesApply(y1,x1) != 0 && !isOutOfBounds(x + x1, y + y1)) {
-          pent.edgesApply(y1, x1).foreach {
+        if (pent.edgesCentered(y1,x1) != 0 && !isOutOfBounds(x + x1, y + y1)) {
+          pent.edgesCentered(y1, x1).foreach {
             direction => 
               if (direction == 1 && x + x1 + 1 < this.size) this._edges(y + y1)(x + x1 + 1)(1) = true
               if (direction == 2) this._edges(y + y1)(x + x1)(0) = true
@@ -66,9 +68,10 @@ object Grid {
           _pentaminoes(y + y1)(x + x1) = Some(pent)
         }
       }
+      true
+    } else {
+      false
     }
-    
-    true
   }
 
   //poistaa annetussa kohdassa olevan pentaminon ja kaikki sen osat molemmista taulukoista
@@ -159,6 +162,23 @@ object Grid {
     removeList.foreach{coordinate => remove(coordinate._1, coordinate._2)}
     (points.round.toInt, rows.toInt)
   }
+  
+  def checkIfMovesPossible(pentamino: Pentamino): Boolean = {
+    
+    var posibleMoveFound = false
+    
+    for (x <- 0 to this.size; y <- 0 to this.size) {
+      for (rotation <- 1 to 4) {
+        for (flip <- 1 to 2) {
+          if (this.pentaminoCanBePlaced(x, y, pentamino)) posibleMoveFound = true
+          pentamino.flipHorizontal()
+        }
+        pentamino.rotateClockwise()
+      }
+    }
+    posibleMoveFound
+  }
+
   
   /*
   //oma apumetodi gridien tarkasteluun kehitysvaiheessa
