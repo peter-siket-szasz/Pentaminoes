@@ -139,8 +139,15 @@ object GameWindow extends SimpleSwingApplication {
     icon = counterclockwisePic
     focusable = true
   }
-    
-  val screen = new GridBagPanel {
+  
+  val playButton = new Button {
+    preferredSize = new Dimension(200, 200)
+    text = "Play"
+    font = defaultFont
+    focusable = true
+  }
+  
+  val gameScreen = new GridBagPanel {
     override def paintComponent(g: Graphics2D) = {
       g.drawImage(backgroundPic, 0, 0, null)
     }
@@ -184,8 +191,14 @@ object GameWindow extends SimpleSwingApplication {
     layout(nextPentamino) = c
   }
   
-  val newGame = Action("New game") { Game.newGame; updateLabels; screen.repaint }
-    
+  val newGame = Action("New game") { Game.newGame; updateLabels; gameScreen.repaint }
+  
+  val menuScreen = new GridBagPanel {
+    val c = new Constraints
+    c.gridheight = 2
+    layout(playButton) = c
+  }
+  
   def top: MainFrame = new MainFrame {
     
     title = "Pentaminoes"
@@ -198,22 +211,23 @@ object GameWindow extends SimpleSwingApplication {
         contents += new MenuItem(newGame)
       }
     }
-    contents = screen
+    contents = menuScreen
     
     listenTo(grid.mouse.clicks, grid.keys)
-    listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
+    listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise, playButton)
     reactions += {
       case MouseClicked(grid, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
         updateLabels
-        screen.repaint()
+        gameScreen.repaint()
       }
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
         else if (source == flipVertically) Game.currentPentamino.flipVertical()
         else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
         else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
-        screen.repaint
+        else if (source == playButton) this.contents = gameScreen
+        gameScreen.repaint
       }
     }
   }
