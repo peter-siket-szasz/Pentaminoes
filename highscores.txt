@@ -3,8 +3,6 @@ testi 20 1 2
 testi 20 1 2
 testi 20 1 2
 testi 20 1 2
-testi 20 1 2
-testi 20 1 2
-testi 20 1 2
-testi 20 1 2
-testi 20 1 2
+testi 10 1 1
+asdasd 10 1 1
+asdasd 0 1 0

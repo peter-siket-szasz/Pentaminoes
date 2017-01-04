@@ -214,7 +214,7 @@ object GameWindow extends SimpleSwingApplication {
   }
   
   val highscoreScreen = new GridBagPanel {
-    def scores = Highscore.getHighscoreList.filter(_.isDefined).map(_.get).map(_.toString)
+    def scores = Highscore.getHighscoreListAsString
     
     val c = new Constraints
     c.gridx = 0
