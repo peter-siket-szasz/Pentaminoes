@@ -9,13 +9,13 @@ object Game {
   private var numberOfColors = 2
   private var currentLevel = 1
   private var currentScore = 0
-  private var rows = 0 //Counts the number of moves which have scored points
+  var rows = 0 //Counts the number of moves which have scored points
   private var nextLevelLimit = 5
   
   private var firstPentamino = this.randomPentamino
   private var secondPentamino = this.randomPentamino
   
-  private var _gameOn = false
+  private var _gameOn = true
   
   def newGame() = {
     this.numberOfColors = 2

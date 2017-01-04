@@ -139,8 +139,29 @@ object GameWindow extends SimpleSwingApplication {
     icon = counterclockwisePic
     focusable = true
   }
-    
-  val screen = new GridBagPanel {
+  
+  val playButton = new Button {
+    preferredSize = new Dimension(200, 200)
+    text = "Play"
+    font = defaultFont
+    focusable = true
+  }
+  
+  val scoreButton = new Button {
+    preferredSize = new Dimension(200,200)
+    text = "Hi-Scores"
+    font = defaultFont
+    focusable = true
+  }
+  
+  val menuButton = new Button {
+    //preferredSize = new Dimension(60,35)
+    text = "Menu"
+    font = defaultFont
+    focusable = true
+  }
+  
+  val gameScreen = new GridBagPanel {
     override def paintComponent(g: Graphics2D) = {
       g.drawImage(backgroundPic, 0, 0, null)
     }
@@ -183,10 +204,50 @@ object GameWindow extends SimpleSwingApplication {
     c.insets = new Insets(25,-50,0,0)
     layout(nextPentamino) = c
   }
+
+  val menuScreen = new GridBagPanel {
+    val c = new Constraints
+    c.gridheight = 2
+    layout(playButton) = c
+    c.gridy = 2
+    layout(scoreButton) = c
+  }
   
-  val newGame = Action("New game") { Game.newGame; updateLabels; screen.repaint }
+  val highscoreScreen = new GridBagPanel {
+    def scores = Highscore.getHighscoreList.filter(_.isDefined).map(_.get).map(_.toString)
     
-  def top: MainFrame = new MainFrame {
+    val c = new Constraints
+    c.gridx = 0
+    c.gridy = 0
+    c.ipady = 25
+    
+    for (i <- 0 until scores.size) {
+      layout(new Label {text = s"${i+1}: ${scores(i)}"; font = defaultFont}) = c
+      c.gridy += 1
+    }
+    
+    layout(menuButton) = c
+    
+  }
+  
+  val newGame = Action("New game") { Game.newGame; updateLabels; frame.repaint }
+  
+  def gameOver: Unit = {
+    if (Highscore.isScoreEnough(Game.score, Game.level, Game.rows)) {
+      val popup = Dialog.showInput(gameScreen, "Your score is eligible for the Highscore list!", "Highscore!", Dialog.Message.Info, initial = "Insert name")
+      val name = popup.getOrElse("Anonymous")
+      Highscore.setNewScore(name, Game.score, Game.level, Game.rows)
+      frame.contents = highscoreScreen
+    }
+    else {
+      val popup = Dialog.showConfirmation(gameScreen, "Game over! Do you want to play again?", "Game over", Dialog.Options.YesNo)
+      if (popup == Dialog.Result.No) frame.contents = menuScreen
+    }
+    Game.newGame
+    frame.repaint
+  }
+  
+  val frame: MainFrame = new MainFrame {
     
     title = "Pentaminoes"
     resizable = false
@@ -198,25 +259,35 @@ object GameWindow extends SimpleSwingApplication {
         contents += new MenuItem(newGame)
       }
     }
-    contents = screen
+    contents = menuScreen
     
     listenTo(grid.mouse.clicks, grid.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
+    listenTo(playButton, scoreButton, menuButton)
     reactions += {
       case MouseClicked(grid, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
         updateLabels
-        screen.repaint()
+        frame.repaint()
+        if (!Game.gameOn) {
+          gameOver
+        }
       }
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
         else if (source == flipVertically) Game.currentPentamino.flipVertical()
         else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
         else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
-        screen.repaint
+        else if (source == playButton)  this.contents = gameScreen
+        else if (source == scoreButton) this.contents = highscoreScreen
+        else if (source == menuButton)  this.contents = menuScreen
+        frame.repaint
       }
     }
   }
+  
+  def top: MainFrame = frame
+  
 }
   
   
