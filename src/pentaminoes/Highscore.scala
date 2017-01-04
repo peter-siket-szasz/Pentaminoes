@@ -9,7 +9,9 @@ object Highscore {
   
   private val fileName = "highscores.txt"
   private val listLenght = 10
-  private var highscoreList = this.readListFromFile
+  private var highscoreLists = this.readListFromFile
+  private var highscoreList = this.highscoreLists._1
+  private var highscoreListAsOptionString = this.highscoreLists._2
   private var minScore = this.minimumScore(this.highscoreList)
   
   def initialize() = {
@@ -18,6 +20,14 @@ object Highscore {
   
   def getHighscoreList = {
     this.highscoreList
+  }
+  
+  def getHighscoreListAsOptionString = {
+    this.highscoreListAsOptionString
+  }
+  
+  def getHighscoreListAsString = {
+    this.highscoreListAsOptionString.map(_.getOrElse("----- 0 0 0"))
   }
   
   def setNewScore(name: String, score: Int, level: Int, rows: Int): Int = {
@@ -35,21 +45,26 @@ object Highscore {
   
   
   
-  private def readListFromFile: Vector[Option[Tuple4[String,Int,Int,Int]]] = {
+  private def readListFromFile: Tuple2[Vector[Option[Tuple4[String,Int,Int,Int]]], Vector[Option[String]]] = {
     val file = Source.fromFile(fileName)
     val highscores = Buffer[Option[Tuple4[String,Int,Int,Int]]]()
+    val highscoresAsOptionString = Buffer[Option[String]]()
     
     try {
       for (line <- file.getLines().take(listLenght)) {
         val data = line.split(" ")
         try { highscores += Some(Tuple4(data(0), data(1).toInt, data(2).toInt, data(3).toInt)) }
         catch { case ex: Exception => highscores += None; println(ex) }
+        highscoresAsOptionString += Some(line)
       }
     } finally {
-      for (i <- highscores.length until this.listLenght) highscores += None
+      for (i <- highscores.length until this.listLenght) {
+        highscores += None
+        highscoresAsOptionString += None
+      }
       file.close()
     }
-    highscores.toVector
+    Tuple2(highscores.toVector, highscoresAsOptionString.toVector)
   }
   
   private def writeListToFile(list: Vector[Option[Tuple4[String,Int,Int,Int]]]) = {
@@ -66,7 +81,9 @@ object Highscore {
   } 
   
   private def updateVariables() = {
-    highscoreList = this.readListFromFile
+    highscoreLists = this.readListFromFile
+    highscoreList = highscoreLists._1
+    highscoreListAsOptionString = highscoreLists._2
     minScore = this.minimumScore(this.highscoreList)
   }
   
