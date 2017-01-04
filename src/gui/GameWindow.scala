@@ -141,14 +141,14 @@ object GameWindow extends SimpleSwingApplication {
   }
   
   val playButton = new Button {
-    preferredSize = new Dimension(200, 200)
+    preferredSize = new Dimension(250, 50)
     text = "Play"
     font = defaultFont
     focusable = true
   }
   
   val scoreButton = new Button {
-    preferredSize = new Dimension(200,200)
+    preferredSize = new Dimension(250,50)
     text = "Hi-Scores"
     font = defaultFont
     focusable = true
@@ -157,6 +157,13 @@ object GameWindow extends SimpleSwingApplication {
   val menuButton = new Button {
     //preferredSize = new Dimension(60,35)
     text = "Menu"
+    font = defaultFont
+    focusable = true
+  }
+  
+  val quitButton = new Button {
+    preferredSize = new Dimension(250,50)
+    text = "Quit"
     font = defaultFont
     focusable = true
   }
@@ -206,16 +213,25 @@ object GameWindow extends SimpleSwingApplication {
   }
 
   val menuScreen = new GridBagPanel {
+    override def paintComponent(g: Graphics2D) = {
+      g.drawImage(backgroundPic, 0, 0, null)
+    }
     val c = new Constraints
-    c.gridheight = 2
+    c.insets = new Insets(13,0,13,0)
+    //c.gridheight = 2
     layout(playButton) = c
     c.gridy = 2
     layout(scoreButton) = c
+    c.gridy = 4
+    layout(quitButton) = c
   }
   
   val highscoreScreen = new GridBagPanel {
-    def scores = Highscore.getHighscoreListAsString
+    override def paintComponent(g: Graphics2D) = {
+      g.drawImage(backgroundPic, 0, 0, null)
+    }
     
+    def scores = Highscore.getHighscoreListAsString
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
@@ -263,7 +279,7 @@ object GameWindow extends SimpleSwingApplication {
     
     listenTo(grid.mouse.clicks, grid.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
-    listenTo(playButton, scoreButton, menuButton)
+    listenTo(playButton, scoreButton, menuButton, quitButton)
     reactions += {
       case MouseClicked(grid, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
@@ -278,9 +294,10 @@ object GameWindow extends SimpleSwingApplication {
         else if (source == flipVertically) Game.currentPentamino.flipVertical()
         else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
         else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
-        else if (source == playButton)  this.contents = gameScreen
+        else if (source == playButton)  {this.contents = gameScreen; Game.newGame}
         else if (source == scoreButton) this.contents = highscoreScreen
         else if (source == menuButton)  this.contents = menuScreen
+        else if (source == quitButton)  dispose()
         frame.repaint
       }
     }
