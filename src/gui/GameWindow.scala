@@ -105,10 +105,18 @@ object GameWindow extends SimpleSwingApplication {
     level.text = levelText
     rows.text = rowsText
   }
+  private def updateHighscores = {
+    val scores = Highscore.getHighscoreListAsString
+    for (i <- 0 until highscores.size) {
+      highscores(i).text = scores(i)
+    }
+  }
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
   val level = new Label{text = levelText; preferredSize = new Dimension(200,45); font = defaultFont}
   val rows  = new Label{text = rowsText;  preferredSize = new Dimension(250,45); font = defaultFont}
+  
+  val highscores = Array.fill[Label](Highscore.getHighscoreList.size)(new Label{font = defaultFont; foreground = Color.WHITE})
   
   val scoreBoard = new FlowPanel {
     contents += score
@@ -231,14 +239,13 @@ object GameWindow extends SimpleSwingApplication {
       g.drawImage(backgroundPic, 0, 0, null)
     }
     
-    def scores = Highscore.getHighscoreListAsString
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
     c.ipady = 25
     
-    for (i <- 0 until scores.size) {
-      layout(new Label {text = s"${i+1}: ${scores(i)}"; font = defaultFont}) = c
+    for (score <- highscores) {
+      layout(score) = c
       c.gridy += 1
     }
     
@@ -251,9 +258,10 @@ object GameWindow extends SimpleSwingApplication {
   def gameOver: Unit = {
     if (Highscore.isScoreEnough(Game.score, Game.level, Game.rows)) {
       val popup = Dialog.showInput(gameScreen, "Your score is eligible for the Highscore list!", "Highscore!", Dialog.Message.Info, initial = "Insert name")
-      val name = popup.getOrElse("Anonymous")
+      val name = popup.getOrElse("Anonymous").replace(' ', '_')
       Highscore.setNewScore(name, Game.score, Game.level, Game.rows)
       frame.contents = highscoreScreen
+      updateHighscores
     }
     else {
       val popup = Dialog.showConfirmation(gameScreen, "Game over! Do you want to play again?", "Game over", Dialog.Options.YesNo)
@@ -295,7 +303,7 @@ object GameWindow extends SimpleSwingApplication {
         else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
         else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
         else if (source == playButton)  {this.contents = gameScreen; Game.newGame}
-        else if (source == scoreButton) this.contents = highscoreScreen
+        else if (source == scoreButton) {this.contents = highscoreScreen; updateHighscores}
         else if (source == menuButton)  this.contents = menuScreen
         else if (source == quitButton)  dispose()
         frame.repaint
