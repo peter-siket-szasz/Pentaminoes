@@ -108,7 +108,7 @@ object GameWindow extends SimpleSwingApplication {
   private def updateHighscores = {
     val scores = Highscore.getHighscoreListAsString
     for (i <- 0 until highscores.size) {
-      highscores(i).text = scores(i)
+      highscores(i).text = s"${i+1}: ${scores(i)}"
     }
   }
   
@@ -116,7 +116,8 @@ object GameWindow extends SimpleSwingApplication {
   val level = new Label{text = levelText; preferredSize = new Dimension(200,45); font = defaultFont}
   val rows  = new Label{text = rowsText;  preferredSize = new Dimension(250,45); font = defaultFont}
   
-  val highscores = Array.fill[Label](Highscore.getHighscoreList.size)(new Label{font = defaultFont; foreground = Color.WHITE})
+  val highscores = 
+    Array.fill[Label](Highscore.getHighscoreList.size)(new Label{font = defaultFont; foreground = Color.WHITE})
   
   val scoreBoard = new FlowPanel {
     contents += score
