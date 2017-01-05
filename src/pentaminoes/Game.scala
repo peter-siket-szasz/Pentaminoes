@@ -9,13 +9,13 @@ object Game {
   private var numberOfColors = 2
   private var currentLevel = 1
   private var currentScore = 0
-  private var rows = 0 //Counts the number of moves which have scored points
+  var rows = 0 //Counts the number of moves which have scored points
   private var nextLevelLimit = 5
   
   private var firstPentamino = this.randomPentamino
   private var secondPentamino = this.randomPentamino
   
-  private var _gameOn = false
+  private var _gameOn = true
   
   def newGame() = {
     this.numberOfColors = 2
@@ -61,9 +61,9 @@ object Game {
     
     if ( ! this.possibleMovesLeft) {
 
-      if (Highscore.isScoreEnough(this.currentScore,this.currentLevel,this.rows)){
+      /*if (Highscore.isScoreEnough(this.currentScore,this.currentLevel,this.rows)){
         println("You are " + Highscore.setNewScore("testi",this.currentScore,this.currentLevel,this.rows) + " in highscore list.")
-      } else println("You don't have enough points. Better luck next time.")
+      } else println("You don't have enough points. Better luck next time.")*/
       
       this._gameOn = false
     }
