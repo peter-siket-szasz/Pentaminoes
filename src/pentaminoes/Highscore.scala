@@ -36,11 +36,11 @@ object Highscore {
     newList += Some(Tuple4(name, score, level, rows))
     val newListVector = this.arrange(newList.toVector).take(this.listLenght)
     this.writeListToFile(newListVector)
-    this.findPosition(name, score, level, rows)
+    this.findPosition(name, score, level, rows)-1
   }
   
   def isScoreEnough(score: Int, level: Int, rows: Int): Boolean = {
-    this.arrange(Vector(Option(this.minScore), Option(Tuple4("",score,level,rows))))(1) != Tuple4("",score,level,rows)
+    this.arrange(Vector(Option(this.minScore), Option(Tuple4("",score,level,rows))))(1) != Some(Tuple4("",score,level,rows))
   }
   
   
@@ -74,10 +74,12 @@ object Highscore {
     }
     file.close()
     this.updateVariables()
+    
+    println(this.getHighscoreListAsString.mkString("\n"))
   }
   
   private def findPosition(name: String, score: Int, level: Int, rows: Int): Int = {
-    10 - this.highscoreList.reverse.indexOf(Some(Tuple4(name, score, level, rows)))
+    this.listLenght - this.highscoreList.reverse.indexOf(Some(Tuple4(name, score, level, rows)))
   } 
   
   private def updateVariables() = {
