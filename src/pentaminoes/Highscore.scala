@@ -36,7 +36,7 @@ object Highscore {
     newList += Some(Tuple4(name, score, level, rows))
     val newListVector = this.arrange(newList.toVector).take(this.listLenght)
     this.writeListToFile(newListVector)
-    this.findPosition(name, score, level, rows)
+    this.findPosition(name, score, level, rows)-1
   }
   
   def isScoreEnough(score: Int, level: Int, rows: Int): Boolean = {
