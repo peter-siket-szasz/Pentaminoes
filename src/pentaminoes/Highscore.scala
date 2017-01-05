@@ -40,7 +40,7 @@ object Highscore {
   }
   
   def isScoreEnough(score: Int, level: Int, rows: Int): Boolean = {
-    this.arrange(Vector(Option(this.minScore), Option(Tuple4("",score,level,rows))))(1) != Tuple4("",score,level,rows)
+    this.arrange(Vector(Option(this.minScore), Option(Tuple4("",score,level,rows))))(1) != Some(Tuple4("",score,level,rows))
   }
   
   
@@ -74,10 +74,12 @@ object Highscore {
     }
     file.close()
     this.updateVariables()
+    
+    println(this.getHighscoreListAsString.mkString("\n"))
   }
   
   private def findPosition(name: String, score: Int, level: Int, rows: Int): Int = {
-    10 - this.highscoreList.reverse.indexOf(Some(Tuple4(name, score, level, rows)))
+    this.listLenght - this.highscoreList.reverse.indexOf(Some(Tuple4(name, score, level, rows)))
   } 
   
   private def updateVariables() = {
