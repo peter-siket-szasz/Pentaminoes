@@ -164,7 +164,6 @@ object GameWindow extends SimpleSwingApplication {
   }
   
   val menuButton = new Button {
-    //preferredSize = new Dimension(60,35)
     text = "Menu"
     font = defaultFont
     focusable = true
@@ -227,7 +226,6 @@ object GameWindow extends SimpleSwingApplication {
     }
     val c = new Constraints
     c.insets = new Insets(13,0,13,0)
-    //c.gridheight = 2
     layout(playButton) = c
     c.gridy = 2
     layout(scoreButton) = c
@@ -239,19 +237,18 @@ object GameWindow extends SimpleSwingApplication {
     override def paintComponent(g: Graphics2D) = {
       g.drawImage(backgroundPic, 0, 0, null)
     }
-    
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
     c.ipady = 25
-    
+    val scoreInfo = new Label{text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE}
+    layout(scoreInfo) = c
+    c.gridy += 1
     for (score <- highscores) {
       layout(score) = c
       c.gridy += 1
     }
-    
     layout(menuButton) = c
-    
   }
   
   val newGame = Action("New game") { Game.newGame; updateLabels; frame.repaint }
