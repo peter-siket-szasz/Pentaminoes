@@ -17,6 +17,8 @@ object Game {
   
   private var _gameOn = true
   
+  private var Grid = new Grid()
+  
   def newGame() = {
     this.numberOfColors = 2
     this.currentLevel = 1

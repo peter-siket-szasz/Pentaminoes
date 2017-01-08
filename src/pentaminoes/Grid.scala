@@ -2,7 +2,7 @@ package pentaminoes
 import Game.grid
 import scala.collection.mutable.Buffer
 
-object Grid {
+class Grid {
 
   val size = 7
   private val minRowLength = 4
@@ -97,6 +97,12 @@ object Grid {
     }
   }
   
+  def hypotheticalAdd(pent: Pentamino, x: Int, y: Int): Grid = {
+    val hypotheticalGrid = this.copy
+    hypotheticalGrid.add(pent, x, y)
+    hypotheticalGrid
+  }
+  
   //Returns points gained and number of rows made. Removes Pentaminoes which are part of rows.
   def checkRows(): (Int, Int) = {
     
@@ -178,7 +184,16 @@ object Grid {
     }
     posibleMoveFound
   }
+  
+  def copy: Grid = {
+    val anotherGrid = new Grid()
+    anotherGrid._colors = this._colors
+    anotherGrid._pentaminoes = this._pentaminoes
+    anotherGrid._edges = this._edges
+    anotherGrid
+  }
 
+  
   
   /*
   //oma apumetodi gridien tarkasteluun kehitysvaiheessa
@@ -202,3 +217,4 @@ object Grid {
   }
   // */
 }
+

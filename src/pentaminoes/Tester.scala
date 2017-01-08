@@ -2,6 +2,8 @@ package pentaminoes
 
 object Tester extends App{
   
+  val Grid = new Grid()
+  
   /*
   println(Pentamino.p(1,1,1,1,1).toString)
   println(Pentamino.x(1,1,1,1,1).toString)

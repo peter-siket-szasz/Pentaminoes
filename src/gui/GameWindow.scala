@@ -16,6 +16,8 @@ import javax.imageio.ImageIO
 object GameWindow extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
+  private var Grid = new Grid()
+  
   val gridWidth = Game.gridColors(0).size
   val gridHeight = Game.gridColors.size
   val blockSize = 50
