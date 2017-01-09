@@ -18,8 +18,8 @@ object GameWindow extends SimpleSwingApplication {
   
   private var Grid = Game.Grid
   
-  val gridWidth = Game.gridColors(0).size
-  val gridHeight = Game.gridColors.size
+  val gridWidth = Grid.colors(0).size
+  val gridHeight = Grid.colors.size
   val blockSize = 50
   val smallBlockSize = 25
   val gridDimesnion = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
@@ -95,7 +95,7 @@ object GameWindow extends SimpleSwingApplication {
         paintLinesAndSquares(g, Game.gridColors, Grid.edges, blockSize)
     }*/
   
-  val grid = new Display(gridWidth, gridHeight, Game.gridColors, Grid.edges, blockSize)
+  val grid = new Display(gridWidth, gridHeight, Grid.colors, Grid.edges, blockSize)
   
   val currentPentamino = new GridPanel(nextGridSize, nextGridSize) {
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
@@ -127,7 +127,7 @@ object GameWindow extends SimpleSwingApplication {
   }
   
   private def updateGrid = {
-    grid.colors = Game.gridColors
+    grid.colors = Grid.colors
     grid.edges = Grid.edges
   }
   
@@ -318,7 +318,7 @@ object GameWindow extends SimpleSwingApplication {
       case MouseMoved(gameScreen, point, _) => {
         updateGrid
         println("----------------------------------------------")
-        println(Game.gridColors.mkString("\n"))
+        println(Grid.colors.mkString("\n"))
         println("----------------------------------------------")
         val hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, point.x / blockSize, point.y / blockSize)
         grid.colors = hypoGrid.colors
