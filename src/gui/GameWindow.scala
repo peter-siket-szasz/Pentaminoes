@@ -78,12 +78,24 @@ object GameWindow extends SimpleSwingApplication {
     }
   }
   
-  val grid = new GridPanel(gridWidth, gridHeight) {     
+  class Display(width: Int, height: Int, var colors: grid, var edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) 
+  extends GridPanel(width, height) {
+    preferredSize = new Dimension(width * blockSize, width * blockSize)
+    focusable = true
+    override def paintComponent(g: Graphics2D) = 
+      paintLinesAndSquares(g, colors, edges, blockSize)
+  }
+  
+  
+  
+  /*var grid = new GridPanel(gridWidth, gridHeight) {     
       preferredSize = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
       focusable = true
       override def paintComponent(g: Graphics2D) = 
         paintLinesAndSquares(g, Game.gridColors, Grid.edges, blockSize)
-    }
+    }*/
+  
+  val grid = new Display(gridWidth, gridHeight, Game.gridColors, Grid.edges, blockSize)
   
   val currentPentamino = new GridPanel(nextGridSize, nextGridSize) {
     preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
@@ -112,6 +124,11 @@ object GameWindow extends SimpleSwingApplication {
     for (i <- 0 until highscores.size) {
       highscores(i).text = s"${i+1}: ${scores(i)}"
     }
+  }
+  
+  private def updateGrid = {
+    grid.colors = Game.gridColors
+    grid.edges = Grid.edges
   }
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
@@ -253,7 +270,7 @@ object GameWindow extends SimpleSwingApplication {
     layout(menuButton) = c
   }
   
-  val newGame = Action("New game") { Game.newGame; updateLabels; frame.repaint }
+  val newGame = Action("New game") { Game.newGame; updateLabels; updateGrid; frame.repaint }
   
   def gameOver: Unit = {
     if (Highscore.isScoreEnough(Game.score, Game.level, Game.rows)) {
@@ -285,17 +302,25 @@ object GameWindow extends SimpleSwingApplication {
     }
     contents = menuScreen
     
-    listenTo(grid.mouse.clicks, grid.keys)
+    listenTo(grid.mouse.clicks, grid.mouse.moves, grid.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
     listenTo(playButton, scoreButton, menuButton, quitButton)
     reactions += {
-      case MouseClicked(grid, point, _, _, _)  => {
+      case MouseClicked(gameScreen, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
+        updateGrid
         updateLabels
         frame.repaint()
         if (!Game.gameOn) {
           gameOver
         }
+      }
+      case MouseMoved(gameScreen, point, _) => {
+        val hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, point.x / blockSize, point.y / blockSize)
+        grid.colors = hypoGrid.colors
+        grid.edges = hypoGrid.edges
+        frame.repaint()
+        updateGrid
       }
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
