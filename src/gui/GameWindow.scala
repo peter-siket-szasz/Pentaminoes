@@ -316,11 +316,14 @@ object GameWindow extends SimpleSwingApplication {
         }
       }
       case MouseMoved(gameScreen, point, _) => {
+        updateGrid
+        println("----------------------------------------------")
+        println(Game.gridColors.mkString("\n"))
+        println("----------------------------------------------")
         val hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, point.x / blockSize, point.y / blockSize)
         grid.colors = hypoGrid.colors
         grid.edges = hypoGrid.edges
         frame.repaint()
-        updateGrid
       }
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
