@@ -17,7 +17,7 @@ object Game {
   
   private var _gameOn = true
   
-  var grid = Grid.empty
+  var grid = new Grid
   
   def newGame() = {
     this.numberOfColors = 2
