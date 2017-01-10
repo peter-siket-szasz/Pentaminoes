@@ -35,9 +35,9 @@ object GameWindow extends SimpleSwingApplication {
   
   val defaultFont = new Font("Castellar", 0, 30)
 
-  val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE, Color.MAGENTA)
+  //val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE, Color.MAGENTA)
   
-  def paintLinesAndSquares(g: Graphics2D, colors: grid, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
+  /*def paintLinesAndSquares(g: Graphics2D, colors: grid, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
     
     val sidex = colors(0).size
     val sidey = colors.size
@@ -77,58 +77,39 @@ object GameWindow extends SimpleSwingApplication {
       }
     }
   }
+  */
   
-  class Display(width: Int, height: Int, var colors: grid, var edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) 
-  extends GridPanel(width, height) {
-    preferredSize = new Dimension(width * blockSize, width * blockSize)
-    focusable = true
-    override def paintComponent(g: Graphics2D) = 
-      paintLinesAndSquares(g, colors, edges, blockSize)
-  }
-  
-  
-  
-  /*var grid = new GridPanel(gridWidth, gridHeight) {     
-      preferredSize = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
-      focusable = true
-      override def paintComponent(g: Graphics2D) = 
-        paintLinesAndSquares(g, Game.gridColors, Grid.edges, blockSize)
-    }*/
   
   val grid = new Display(gridWidth, gridHeight, Grid.colors, Grid.edges, blockSize)
   
-  val currentPentamino = new GridPanel(nextGridSize, nextGridSize) {
-    preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
-    focusable = false
-    override def paintComponent(g: Graphics2D) = 
-      paintLinesAndSquares(g, Game.currentPentamino.toVector, Game.currentPentamino.twoBooleanEdges, smallBlockSize)
-  }
+  val currentPentamino = new Display(nextGridSize, nextGridSize, Game.currentPentamino.toVector, 
+      Game.currentPentamino.twoBooleanEdges, smallBlockSize)
   
-  val nextPentamino = new GridPanel(nextGridSize, nextGridSize) {
-    preferredSize = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
-    focusable = false
-    override def paintComponent(g: Graphics2D) = 
-      paintLinesAndSquares(g, Game.nextPentamino.toVector, Game.nextPentamino.twoBooleanEdges, smallBlockSize)
-  }
+  val nextPentamino = new Display(nextGridSize, nextGridSize, Game.nextPentamino.toVector, 
+      Game.nextPentamino.twoBooleanEdges, smallBlockSize)
   
   private def scoreText = "Score: " + Game.score
   private def levelText = "Level: " + Game.level
   private def rowsText = "Rows: " + Game.rowsToNextLevel
-  private def updateLabels = {
+  private def updateLabels() = {
     score.text = scoreText
     level.text = levelText
     rows.text = rowsText
   }
-  private def updateHighscores = {
+  private def updateHighscores() = {
     val scores = Highscore.getHighscoreListAsString
     for (i <- 0 until highscores.size) {
       highscores(i).text = s"${i+1}: ${scores(i)}"
     }
   }
   
-  private def updateGrid = {
+  private def updateGrids() = {
     grid.colors = Grid.colors
     grid.edges = Grid.edges
+    currentPentamino.colors = Game.currentPentamino.toVector
+    currentPentamino.edges =  Game.currentPentamino.twoBooleanEdges
+    nextPentamino.colors = Game.nextPentamino.toVector
+    nextPentamino.edges = Game.nextPentamino.twoBooleanEdges
   }
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
@@ -270,7 +251,7 @@ object GameWindow extends SimpleSwingApplication {
     layout(menuButton) = c
   }
   
-  val newGame = Action("New game") { Game.newGame; updateLabels; updateGrid; frame.repaint }
+  val newGame = Action("New game") { Game.newGame; updateLabels(); updateGrids(); frame.repaint() }
   
   def gameOver: Unit = {
     if (Highscore.isScoreEnough(Game.score, Game.level, Game.rows)) {
@@ -278,14 +259,14 @@ object GameWindow extends SimpleSwingApplication {
       val name = popup.getOrElse("Anonymous").replace(' ', '_')
       Highscore.setNewScore(name, Game.score, Game.level, Game.rows)
       frame.contents = highscoreScreen
-      updateHighscores
+      updateHighscores()
     }
     else {
       val popup = Dialog.showConfirmation(gameScreen, "Game over! Do you want to play again?", "Game over", Dialog.Options.YesNo)
       if (popup == Dialog.Result.No) frame.contents = menuScreen
     }
     Game.newGame
-    frame.repaint
+    frame.repaint()
   }
   
   val frame: MainFrame = new MainFrame {
@@ -308,15 +289,15 @@ object GameWindow extends SimpleSwingApplication {
     reactions += {
       case MouseClicked(gameScreen, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
-        updateGrid
-        updateLabels
+        updateGrids()
+        updateLabels()
         frame.repaint()
         if (!Game.gameOn) {
           gameOver
         }
       }
-      case MouseMoved(gameScreen, point, _) => {
-        updateGrid
+      /*case MouseMoved(gameScreen, point, _) => {
+        updateGrids()
         println("----------------------------------------------")
         println(Grid.colors.mkString("\n"))
         println("----------------------------------------------")
@@ -324,17 +305,18 @@ object GameWindow extends SimpleSwingApplication {
         grid.colors = hypoGrid.colors
         grid.edges = hypoGrid.edges
         frame.repaint()
-      }
+      }*/
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
         else if (source == flipVertically) Game.currentPentamino.flipVertical()
         else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
         else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
         else if (source == playButton)  {this.contents = gameScreen; Game.newGame}
-        else if (source == scoreButton) {this.contents = highscoreScreen; updateHighscores}
+        else if (source == scoreButton) {this.contents = highscoreScreen; updateHighscores()}
         else if (source == menuButton)  this.contents = menuScreen
         else if (source == quitButton)  dispose()
-        frame.repaint
+        updateGrids()
+        frame.repaint()
       }
     }
   }
