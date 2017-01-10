@@ -2,13 +2,12 @@ package pentaminoes
 import Game.grid
 import scala.collection.mutable.Buffer
 
-class Grid {
+class Grid(private var _pentaminoes: Array[Array[Option[Pentamino]]],
+           private var _colors: Array[Array[Int]],
+           private var _edges: Array[Array[Array[Boolean]]]) {
 
-  val size = 7
+  val size = Grid.size  
   private val minRowLength = 4
-  private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
-  private var _colors = Array.ofDim[Int](size, size)
-  private var _edges = Array.ofDim[Boolean](size, size, 2) //First boolean is top line, second one is left
   private var pentaminoCounter = 0
  // private var lastPentamino: Option[Pentamino] = None
   
@@ -98,7 +97,9 @@ class Grid {
   }
   
   def hypotheticalAdd(pent: Pentamino, x: Int, y: Int): Grid = {
-    val hypotheticalGrid = this.copy
+    val hypotheticalGrid = new Grid(Array.tabulate(size, size)(this.pentaminoes(_)(_)),
+                                    Array.tabulate(size, size)(this.colors(_)(_)),
+                                    Array.tabulate(size,size,2)(this.edges(_)(_)(_)))
     hypotheticalGrid.add(pent, x, y)
     hypotheticalGrid
   }
@@ -186,10 +187,12 @@ class Grid {
   }
   
   def copy: Grid = {
-    val anotherGrid = new Grid()
-    anotherGrid._colors = this._colors
-    anotherGrid._pentaminoes = this._pentaminoes
-    anotherGrid._edges = this._edges
+    val anotherGrid = Grid.empty
+    anotherGrid._colors = this._colors.map(identity)
+    anotherGrid._pentaminoes = this._pentaminoes.map(identity)
+    anotherGrid._edges = this._edges.map(identity)
+    //println(anotherGrid.pentaminoes)
+    //println(this.pentaminoes)
     anotherGrid
   }
 
@@ -216,5 +219,15 @@ class Grid {
     }
   }
   // */
+}
+
+object Grid  {
+  
+  val size = 7
+  
+  def empty = new Grid(Array.ofDim[Option[Pentamino]](size,size),
+                       Array.ofDim[Int](size, size),
+                       Array.ofDim[Boolean](size, size, 2))
+  
 }
 

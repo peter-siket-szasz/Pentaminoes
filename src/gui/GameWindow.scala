@@ -16,7 +16,7 @@ import javax.imageio.ImageIO
 object GameWindow extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
-  private var Grid = Game.Grid
+  private var Grid = Game.grid
   
   val gridWidth = Grid.colors(0).size
   val gridHeight = Grid.colors.size
@@ -252,9 +252,9 @@ object GameWindow extends SimpleSwingApplication {
         }
       }
       case MouseMoved(gameScreen, point, _) => {
-        println("----------------------------------------------")
-        println(Grid.colors.mkString("\n"))
-        println("----------------------------------------------")
+        //println("----------------------------------------------")
+        //println(Grid.colors.mkString("\n"))
+        //println("----------------------------------------------")
         val hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, point.x / blockSize, point.y / blockSize)
         grid.colors = hypoGrid.colors
         grid.edges = hypoGrid.edges
