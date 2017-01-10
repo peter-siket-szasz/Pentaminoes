@@ -7,11 +7,12 @@ import java.awt.Color
 class Display(width: Int, height: Int, var colors: grid, var edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) 
   extends GridPanel(width, height) {
     preferredSize = new Dimension(width * blockSize, width * blockSize)
-    focusable = true
 
     override def paintComponent(g: Graphics2D) = 
       Display.paintLinesAndSquares(g, colors, edges, blockSize)
   }
+
+
 
 object Display {
   
@@ -21,7 +22,6 @@ object Display {
     val height = edges(0).size
     val width = edges.size
     g.setColor(Color.BLACK)
-    
     for (row <- 0 until height) {
       for (col <- 0 until width) {
         if (edges(row)(col)(0) && row != 0) {
@@ -39,10 +39,8 @@ object Display {
   }
   
   def paintLinesAndSquares(g: Graphics2D, colors: grid, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
-    
     val sidex = colors(0).size
     val sidey = colors.size
-    
     for (row <- 0 until sidey) {
       for (col <- 0 until sidex) {
         g.setColor(numbersToColors(colors(row)(col)))

@@ -83,58 +83,51 @@ object GameWindow extends SimpleSwingApplication {
   val flipHorizontally = new Button {
     preferredSize = new Dimension(100,100)
     icon = horizontalPic
-    focusable = true
   }
   
   val flipVertically = new Button {
     preferredSize = new Dimension(100,100)
     icon = verticalPic
-    focusable = true
   }
   
   val rotateClockwise = new Button {
     preferredSize = new Dimension(100,100)
     icon = clockwisePic
-    focusable = true
   }
   
   val rotateCounterclockwise = new Button {
     preferredSize = new Dimension(100,100)
     icon = counterclockwisePic
-    focusable = true
   }
   
   val playButton = new Button {
     preferredSize = new Dimension(250, 50)
     text = "Play"
     font = defaultFont
-    focusable = true
   }
   
   val scoreButton = new Button {
     preferredSize = new Dimension(250,50)
     text = "Hi-Scores"
     font = defaultFont
-    focusable = true
   }
   
   val menuButton = new Button {
     text = "Menu"
     font = defaultFont
-    focusable = true
   }
   
   val quitButton = new Button {
     preferredSize = new Dimension(250,50)
     text = "Quit"
     font = defaultFont
-    focusable = true
   }
   
   val gameScreen = new GridBagPanel {
     override def paintComponent(g: Graphics2D) = {
       g.drawImage(backgroundPic, 0, 0, null)
     }
+    focusable = true
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
@@ -238,11 +231,11 @@ object GameWindow extends SimpleSwingApplication {
     }
     contents = menuScreen
     
-    listenTo(grid.mouse.clicks, grid.mouse.moves, grid.keys)
+    listenTo(grid.mouse.clicks, gameScreen.mouse.moves, grid.mouse.moves, grid.keys, gameScreen.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
     listenTo(playButton, scoreButton, menuButton, quitButton)
     reactions += {
-      case MouseClicked(gameScreen, point, _, _, _)  => {
+      case MouseClicked(_, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
         updateGrids()
         updateLabels()
@@ -251,14 +244,14 @@ object GameWindow extends SimpleSwingApplication {
           gameOver
         }
       }
-      case MouseMoved(gameScreen, point, _) => {
-        //println("----------------------------------------------")
-        //println(Grid.colors.mkString("\n"))
-        //println("----------------------------------------------")
-        val hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, point.x / blockSize, point.y / blockSize)
-        grid.colors = hypoGrid.colors
-        grid.edges = hypoGrid.edges
+      case MouseMoved(component, point, _) => {
+        if (component == grid) {
+          val hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, point.x / blockSize, point.y / blockSize)
+          grid.colors = hypoGrid.colors
+          grid.edges = hypoGrid.edges
+        } else updateGrids()
         frame.repaint()
+        gameScreen.requestFocus
       }
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
@@ -271,10 +264,13 @@ object GameWindow extends SimpleSwingApplication {
         else if (source == quitButton)  dispose()
         updateGrids()
         frame.repaint()
+        gameScreen.requestFocus
       }
       case KeyPressed(_, key, _, _) => {
-        println(key)
-        if (key == Key.Left) Game.currentPentamino.rotateCounterClockwise()
+        if (key == Key.Left)       Game.currentPentamino.rotateCounterClockwise()
+        else if (key == Key.Right) Game.currentPentamino.rotateClockwise()
+        else if (key == Key.Up)    Game.currentPentamino.flipVertical()
+        else if (key == Key.Down)  Game.currentPentamino.flipHorizontal()
         updateGrids()
         frame.repaint()
       }
