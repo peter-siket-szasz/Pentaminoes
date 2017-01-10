@@ -35,51 +35,6 @@ object GameWindow extends SimpleSwingApplication {
   
   val defaultFont = new Font("Castellar", 0, 30)
 
-  //val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE, Color.MAGENTA)
-  
-  /*def paintLinesAndSquares(g: Graphics2D, colors: grid, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
-    
-    val sidex = colors(0).size
-    val sidey = colors.size
-    
-    for (row <- 0 until sidey) {
-      for (col <- 0 until sidex) {
-        g.setColor(numbersToColors(colors(row)(col)))
-        g.fillRect(col * blockSize, row * blockSize, blockSize, blockSize)
-      }
-    }
-    g.setColor(Color.BLACK)
-    for (x <- 1 until sidex) g.drawLine(x * blockSize, 0, x * blockSize, sidey * blockSize)
-    for (y <- 1 until sidey) g.drawLine(0, y * blockSize, sidex * blockSize, y * blockSize)
-    paintEdges(g, edges, blockSize)
-    
-    
-  }
-  
-  def paintEdges(g: Graphics2D, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
-    
-    val height = edges(0).size
-    val width = edges.size
-    g.setColor(Color.BLACK)
-    
-    for (row <- 0 until height) {
-      for (col <- 0 until width) {
-        if (edges(row)(col)(0) && row != 0) {
-          for (i <- -1 to 1) {
-            g.drawLine(col * blockSize, row * blockSize + i, (col + 1) * blockSize, row * blockSize + i)
-          }
-        }
-        if (edges(row)(col)(1) && col !=0) {
-          for (i <- -1 to 1) {
-            g.drawLine(col * blockSize + i, row * blockSize, col * blockSize + i, (row + 1) * blockSize)
-          }
-        }
-      }
-    }
-  }
-  */
-  
-  
   val grid = new Display(gridWidth, gridHeight, Grid.colors, Grid.edges, blockSize)
   
   val currentPentamino = new Display(nextGridSize, nextGridSize, Game.currentPentamino.toVector, 
@@ -105,11 +60,11 @@ object GameWindow extends SimpleSwingApplication {
   
   private def updateGrids() = {
     grid.colors = Grid.colors
-    grid.edges = Grid.edges
+    grid.edges  = Grid.edges
     currentPentamino.colors = Game.currentPentamino.toVector
-    currentPentamino.edges =  Game.currentPentamino.twoBooleanEdges
+    currentPentamino.edges  = Game.currentPentamino.twoBooleanEdges
     nextPentamino.colors = Game.nextPentamino.toVector
-    nextPentamino.edges = Game.nextPentamino.twoBooleanEdges
+    nextPentamino.edges  = Game.nextPentamino.twoBooleanEdges
   }
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
@@ -296,8 +251,7 @@ object GameWindow extends SimpleSwingApplication {
           gameOver
         }
       }
-      /*case MouseMoved(gameScreen, point, _) => {
-        updateGrids()
+      case MouseMoved(gameScreen, point, _) => {
         println("----------------------------------------------")
         println(Grid.colors.mkString("\n"))
         println("----------------------------------------------")
@@ -305,7 +259,7 @@ object GameWindow extends SimpleSwingApplication {
         grid.colors = hypoGrid.colors
         grid.edges = hypoGrid.edges
         frame.repaint()
-      }*/
+      }
       case ButtonClicked(source) => {
         if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
         else if (source == flipVertically) Game.currentPentamino.flipVertical()
@@ -315,6 +269,12 @@ object GameWindow extends SimpleSwingApplication {
         else if (source == scoreButton) {this.contents = highscoreScreen; updateHighscores()}
         else if (source == menuButton)  this.contents = menuScreen
         else if (source == quitButton)  dispose()
+        updateGrids()
+        frame.repaint()
+      }
+      case KeyPressed(_, key, _, _) => {
+        println(key)
+        if (key == Key.Left) Game.currentPentamino.rotateCounterClockwise()
         updateGrids()
         frame.repaint()
       }

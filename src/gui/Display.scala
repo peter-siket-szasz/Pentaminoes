@@ -8,9 +8,7 @@ class Display(width: Int, height: Int, var colors: grid, var edges: Vector[Vecto
   extends GridPanel(width, height) {
     preferredSize = new Dimension(width * blockSize, width * blockSize)
     focusable = true
-    
-    
-    
+
     override def paintComponent(g: Graphics2D) = 
       Display.paintLinesAndSquares(g, colors, edges, blockSize)
   }
