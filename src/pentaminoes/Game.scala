@@ -17,6 +17,8 @@ object Game {
   
   private var _gameOn = true
   
+  var grid = new Grid
+  
   def newGame() = {
     this.numberOfColors = 2
     this.currentLevel = 1
@@ -29,7 +31,7 @@ object Game {
     
     _gameOn = true
     
-    Grid.initialize()
+    grid.initialize()
   }
   
   def randomPentamino = {
@@ -41,10 +43,10 @@ object Game {
   }
   
   def placePentamino(x: Int, y: Int) = {
-    val isPlaced = Grid.add(this.currentPentamino, x, y)
+    val isPlaced = grid.add(this.currentPentamino, x, y)
 
     if (isPlaced) {
-      val pointsAndRows = Grid.checkRows()
+      val pointsAndRows = grid.checkRows()
       val points = pointsAndRows._1
       val rows = pointsAndRows._2
       
@@ -71,24 +73,24 @@ object Game {
 
   def gameOn = this._gameOn
   
-  def possibleMovesLeft = Grid.checkIfMovesPossible(this.currentPentamino)
+  def possibleMovesLeft = grid.checkIfMovesPossible(this.currentPentamino)
   
-  // Returns true if current Pentamino can be placed to Grid's coordinates (x,y)
+  // Returns true if current Pentamino can be placed to grid's coordinates (x,y)
   def canPlacePentamino(x: Int, y:Int): Boolean = {
-    Grid.canBePlaced(x, y)
+    grid.canBePlaced(x, y)
   }
   
   // Returns a Vector of coordinates in which the current Pentamino (if played in coordinates (x,y)) overlaps another Pentamino
   def overlaps(x: Int, y: Int): Array[Tuple2[Int,Int]] = {
-    ??? // TODO calls Grid's methods
+    ??? // TODO calls grid's methods
   }
   
   def currentPentamino = this.firstPentamino
   
   def nextPentamino = this.secondPentamino
   
-  // Returns 2-dimensional Vector of Ints(/colors) in Grid
-  def gridColors: grid = Grid.colors
+  // Returns 2-dimensional Vector of Ints(/colors) in grid
+  def gridColors: grid = grid.colors
   
   def level = this.currentLevel
   

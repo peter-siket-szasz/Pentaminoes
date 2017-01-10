@@ -2,13 +2,15 @@ package pentaminoes
 import Game.grid
 import scala.collection.mutable.Buffer
 
-object Grid {
+class Grid {
 
   val size = 7
-  private val minRowLength = 4
-  private var _pentaminoes: Array[Array[Option[Pentamino]]] = Array.ofDim[Option[Pentamino]](size,size)
+  
   private var _colors = Array.ofDim[Int](size, size)
-  private var _edges = Array.ofDim[Boolean](size, size, 2) //First boolean is top line, second one is left
+  private var _pentaminoes =  Array.ofDim[Option[Pentamino]](size,size)
+  private var _edges = Array.ofDim[Boolean](size, size, 2)
+  
+  private val minRowLength = 4
   private var pentaminoCounter = 0
  // private var lastPentamino: Option[Pentamino] = None
   
@@ -97,6 +99,14 @@ object Grid {
     }
   }
   
+  def hypotheticalAdd(pent: Pentamino, x: Int, y: Int): Grid = {
+    val hypotheticalGrid = new Grid()
+    hypotheticalGrid._colors = Array.tabulate(size, size)(this.colors(_)(_))
+    hypotheticalGrid._edges = Array.tabulate(size,size,2)(this.edges(_)(_)(_))
+    hypotheticalGrid.add(pent, x, y)
+    hypotheticalGrid
+  }
+  
   //Returns points gained and number of rows made. Removes Pentaminoes which are part of rows.
   def checkRows(): (Int, Int) = {
     
@@ -178,7 +188,18 @@ object Grid {
     }
     posibleMoveFound
   }
+  
+  def copy: Grid = {
+    val anotherGrid = new Grid
+    anotherGrid._colors = this._colors.map(identity)
+    anotherGrid._pentaminoes = this._pentaminoes.map(identity)
+    anotherGrid._edges = this._edges.map(identity)
+    //println(anotherGrid.pentaminoes)
+    //println(this.pentaminoes)
+    anotherGrid
+  }
 
+  
   
   /*
   //oma apumetodi gridien tarkasteluun kehitysvaiheessa
@@ -202,3 +223,5 @@ object Grid {
   }
   // */
 }
+
+
