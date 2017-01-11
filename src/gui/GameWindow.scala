@@ -67,7 +67,7 @@ object GameWindow extends SimpleSwingApplication {
     nextPentamino.edges  = Game.nextPentamino.twoBooleanEdges
   }
   
-  val score = new Label{text = scoreText; preferredSize = new Dimension(200,45); font = defaultFont}
+  val score = new Label{text = scoreText; preferredSize = new Dimension(250,45); font = defaultFont}
   val level = new Label{text = levelText; preferredSize = new Dimension(200,45); font = defaultFont}
   val rows  = new Label{text = rowsText;  preferredSize = new Dimension(250,45); font = defaultFont}
   
