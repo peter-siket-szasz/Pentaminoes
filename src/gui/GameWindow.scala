@@ -18,14 +18,15 @@ object GameWindow extends SimpleSwingApplication {
   
   private var Grid = Game.grid
   
-  val gridWidth = Grid.colors(0).size
-  val gridHeight = Grid.colors.size
+  val gridSize = Grid.size
   val blockSize = 50
   val smallBlockSize = 25
-  val gridDimesnion = new Dimension(gridWidth * blockSize, gridHeight * blockSize)
+  val gridDimesnion = new Dimension(gridSize * blockSize, gridSize * blockSize)
   val nextGridSize = 5
   val nextGridDimension = new Dimension(nextGridSize * smallBlockSize, nextGridSize * smallBlockSize)
   val windowSize = new Dimension(1000, 900)
+  var mousePosx = 3
+  var mousePosy = 3
   
   val verticalPic = new ImageIcon("Icons/flipVertical.png")
   val horizontalPic = new ImageIcon("Icons/flipHorizontal.png")
@@ -35,7 +36,7 @@ object GameWindow extends SimpleSwingApplication {
   
   val defaultFont = new Font("Castellar", 0, 30)
 
-  val grid = new Display(gridWidth, gridHeight, Grid.colors, Grid.edges, blockSize)
+  val grid = new Display(gridSize, gridSize, Grid.colors, Grid.edges, blockSize)
   
   val currentPentamino = new Display(nextGridSize, nextGridSize, Game.currentPentamino.toVector, 
       Game.currentPentamino.twoBooleanEdges, smallBlockSize)
@@ -55,16 +56,22 @@ object GameWindow extends SimpleSwingApplication {
     val scores = Highscore.getHighscoreListAsString
     for (i <- 0 until highscores.size) {
       highscores(i).text = s"${i+1}: ${scores(i)}"
+      highscores(i).foreground = Color.WHITE
     }
   }
   
   private def updateGrids() = {
-    grid.colors = Grid.colors
-    grid.edges  = Grid.edges
+    showHypo()
     currentPentamino.colors = Game.currentPentamino.toVector
     currentPentamino.edges  = Game.currentPentamino.twoBooleanEdges
     nextPentamino.colors = Game.nextPentamino.toVector
     nextPentamino.edges  = Game.nextPentamino.twoBooleanEdges
+  }
+  
+  private def showHypo() = {
+    def hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, mousePosx, mousePosy)
+    grid.colors = hypoGrid.colors
+    grid.edges = hypoGrid.edges
   }
   
   val score = new Label{text = scoreText; preferredSize = new Dimension(250,45); font = defaultFont}
@@ -186,11 +193,11 @@ object GameWindow extends SimpleSwingApplication {
       g.drawImage(backgroundPic, 0, 0, null)
     }
     requestFocus
+    val scoreInfo = new Label{text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE}
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
     c.ipady = 25
-    val scoreInfo = new Label{text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE}
     layout(scoreInfo) = c
     c.gridy += 1
     for (score <- highscores) {
@@ -200,15 +207,28 @@ object GameWindow extends SimpleSwingApplication {
     layout(menuButton) = c
   }
   
-  val newGame = Action("New game") { Game.newGame; updateLabels(); updateGrids(); frame.repaint() }
+  def newGame = {
+    Game.newGame
+    mousePosx = 3
+    mousePosy = 3
+    updateLabels()
+    updateGrids()
+    frame.contents = gameScreen
+    frame.repaint() 
+  }
+  
+  val startGame = Action("New game")(newGame)
+  
+  val endGame = Action("End game")(gameOver)
   
   def gameOver: Unit = {
     if (Highscore.isScoreEnough(Game.score, Game.level, Game.rows)) {
       val popup = Dialog.showInput(gameScreen, "Your score is eligible for the Highscore list!", "Highscore!", Dialog.Message.Info, initial = "Insert name")
       val name = popup.getOrElse("Anonymous").replace(' ', '_')
-      Highscore.setNewScore(name, Game.score, Game.level, Game.rows)
+      val newRank = Highscore.setNewScore(name, Game.score, Game.level, Game.rows)
       frame.contents = highscoreScreen
       updateHighscores()
+      highscores(newRank).foreground = Color.RED
     }
     else {
       val popup = Dialog.showConfirmation(gameScreen, "Game over! Do you want to play again?", "Game over", Dialog.Options.YesNo)
@@ -227,7 +247,8 @@ object GameWindow extends SimpleSwingApplication {
 
     menuBar = new MenuBar {
       contents += new Menu("Game") {
-        contents += new MenuItem(newGame)
+        contents += new MenuItem(startGame)
+        contents += new MenuItem(endGame)
       }
     }
     contents = menuScreen
@@ -248,10 +269,10 @@ object GameWindow extends SimpleSwingApplication {
       }
       case MouseMoved(component, point, _) => {
         if (component == grid) {
-          val hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, point.x / blockSize, point.y / blockSize)
-          grid.colors = hypoGrid.colors
-          grid.edges = hypoGrid.edges
-        } else updateGrids()
+          mousePosx = point.x / blockSize
+          mousePosy = point.y / blockSize
+        }
+        updateGrids()
         frame.repaint()
         gameScreen.requestFocus
       }
@@ -269,11 +290,21 @@ object GameWindow extends SimpleSwingApplication {
         gameScreen.requestFocus
       }
       case KeyPressed(_, key, _, _) => {
-        if (key == Key.Left)       Game.currentPentamino.rotateCounterClockwise()
-        else if (key == Key.Right) Game.currentPentamino.rotateClockwise()
-        else if (key == Key.Up)    Game.currentPentamino.flipVertical()
-        else if (key == Key.Down)  Game.currentPentamino.flipHorizontal()
+        if (key == Key.A)      Game.currentPentamino.rotateCounterClockwise()
+        else if (key == Key.D) Game.currentPentamino.rotateClockwise()
+        else if (key == Key.W) Game.currentPentamino.flipVertical()
+        else if (key == Key.S) Game.currentPentamino.flipHorizontal()
+        else if (key == Key.Up)    mousePosy = Math.max(mousePosy - 1, 0)
+        else if (key == Key.Down)  mousePosy = Math.min(mousePosy + 1, gridSize - 1)
+        else if (key == Key.Right) mousePosx = Math.min(mousePosx + 1, gridSize - 1)
+        else if (key == Key.Left)  mousePosx = Math.max(mousePosx - 1, 0)
+        else if (key == Key.Enter) {
+          Game.placePentamino(mousePosx, mousePosy)
+          mousePosx = 3
+          mousePosy = 3
+        }
         updateGrids()
+        updateLabels()
         frame.repaint()
       }
     }
