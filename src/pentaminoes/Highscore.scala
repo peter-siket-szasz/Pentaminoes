@@ -74,8 +74,6 @@ object Highscore {
     }
     file.close()
     this.updateVariables()
-    
-    println(this.getHighscoreListAsString.mkString("\n"))
   }
   
   private def findPosition(name: String, score: Int, level: Int, rows: Int): Int = {

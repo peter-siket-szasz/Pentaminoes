@@ -185,6 +185,7 @@ object GameWindow extends SimpleSwingApplication {
     override def paintComponent(g: Graphics2D) = {
       g.drawImage(backgroundPic, 0, 0, null)
     }
+    requestFocus
     val c = new Constraints
     c.gridx = 0
     c.gridy = 0
@@ -230,6 +231,7 @@ object GameWindow extends SimpleSwingApplication {
       }
     }
     contents = menuScreen
+    menuScreen.requestFocus
     
     listenTo(grid.mouse.clicks, gameScreen.mouse.moves, grid.mouse.moves, grid.keys, gameScreen.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)

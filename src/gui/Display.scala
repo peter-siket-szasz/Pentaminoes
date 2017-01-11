@@ -16,7 +16,7 @@ class Display(width: Int, height: Int, var colors: grid, var edges: Vector[Vecto
 
 object Display {
   
-  val numbersToColors = Vector(Color.WHITE, Color.GREEN, Color.BLUE, Color.RED, Color.YELLOW, Color.ORANGE, Color.MAGENTA)
+  val numbersToColors = Vector(Color.WHITE, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.RED, Color.BLUE)
   
   def paintEdges(g: Graphics2D, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
     val height = edges(0).size
