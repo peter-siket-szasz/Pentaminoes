@@ -192,7 +192,6 @@ object GameWindow extends SimpleSwingApplication {
     override def paintComponent(g: Graphics2D) = {
       g.drawImage(backgroundPic, 0, 0, null)
     }
-    requestFocus
     val scoreInfo = new Label{text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE}
     val c = new Constraints
     c.gridx = 0
@@ -221,6 +220,7 @@ object GameWindow extends SimpleSwingApplication {
   
   val endGame = Action("End game")(gameOver)
   
+  
   def gameOver: Unit = {
     if (Highscore.isScoreEnough(Game.score, Game.level, Game.rows)) {
       val popup = Dialog.showInput(gameScreen, "Your score is eligible for the Highscore list!", "Highscore!", Dialog.Message.Info, initial = "Insert name")
@@ -229,12 +229,12 @@ object GameWindow extends SimpleSwingApplication {
       frame.contents = highscoreScreen
       updateHighscores()
       highscores(newRank).foreground = Color.RED
+      Game.newGame
+    } else {
+        val popup = Dialog.showConfirmation(gameScreen, "Game over! Do you want to play again?", "Game over", Dialog.Options.YesNo)
+        if (popup == Dialog.Result.No) frame.contents = menuScreen
+        else newGame
     }
-    else {
-      val popup = Dialog.showConfirmation(gameScreen, "Game over! Do you want to play again?", "Game over", Dialog.Options.YesNo)
-      if (popup == Dialog.Result.No) frame.contents = menuScreen
-    }
-    Game.newGame
     frame.repaint()
   }
   
@@ -263,9 +263,7 @@ object GameWindow extends SimpleSwingApplication {
         updateGrids()
         updateLabels()
         frame.repaint()
-        if (!Game.gameOn) {
-          gameOver
-        }
+        if (!Game.gameOn) gameOver
       }
       case MouseMoved(component, point, _) => {
         if (component == grid) {
@@ -281,7 +279,7 @@ object GameWindow extends SimpleSwingApplication {
         else if (source == flipVertically) Game.currentPentamino.flipVertical()
         else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
         else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
-        else if (source == playButton)  {this.contents = gameScreen; Game.newGame}
+        else if (source == playButton)  newGame
         else if (source == scoreButton) {this.contents = highscoreScreen; updateHighscores()}
         else if (source == menuButton)  this.contents = menuScreen
         else if (source == quitButton)  dispose()
@@ -306,12 +304,12 @@ object GameWindow extends SimpleSwingApplication {
         updateGrids()
         updateLabels()
         frame.repaint()
+        if (!Game.gameOn) gameOver
       }
     }
   }
   
   def top: MainFrame = frame
-  
 }
   
   
