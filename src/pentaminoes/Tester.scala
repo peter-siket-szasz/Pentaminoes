@@ -3,8 +3,8 @@ import gui._
 
 object Tester extends App{
   
-  /*val Grid = new Grid()
-  val gameWindow = GameWindow*/
+  //val Grid = new Grid()
+  //val gameWindow = GameWindow
   
   /*
   println(Pentamino.p(1,1,1,1,1).toString)

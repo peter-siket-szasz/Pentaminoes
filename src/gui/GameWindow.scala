@@ -8,12 +8,9 @@ import java.awt.Color
 import scala.swing.GridBagPanel._
 import scala.util.Random
 import javax.swing. { UIManager, ImageIcon }
-import java.awt.image.BufferedImage                                           
-import java.io.File                                                           
-import javax.imageio.ImageIO
     
 
-object GameWindow extends SimpleSwingApplication {
+private object GameWindow extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
   var Grid = Game.grid
@@ -32,7 +29,7 @@ object GameWindow extends SimpleSwingApplication {
   val horizontalPic = new ImageIcon("Icons/flipHorizontal.png")
   val clockwisePic = new ImageIcon("Icons/rotateClockwise.png")
   val counterclockwisePic = new ImageIcon("Icons/rotateCounterclockwise.png")
-  val backgroundPic = ImageIO.read(new File("Icons/background.png"))
+  val backgroundPic = new ImageIcon("Icons/background.png")
   
   val defaultFont = new Font("Castellar", 0, 30)
 
@@ -133,7 +130,7 @@ object GameWindow extends SimpleSwingApplication {
   
   val gameScreen = new GridBagPanel {
     override def paintComponent(g: Graphics2D) = {
-      g.drawImage(backgroundPic, 0, 0, null)
+      g.drawImage(backgroundPic.getImage, 0, 0, null)
     }
     focusable = true
     val c = new Constraints
@@ -178,7 +175,7 @@ object GameWindow extends SimpleSwingApplication {
 
   val menuScreen = new GridBagPanel {
     override def paintComponent(g: Graphics2D) = {
-      g.drawImage(backgroundPic, 0, 0, null)
+      g.drawImage(backgroundPic.getImage, 0, 0, null)
     }
     val c = new Constraints
     c.insets = new Insets(13,0,13,0)
@@ -191,7 +188,7 @@ object GameWindow extends SimpleSwingApplication {
   
   val highscoreScreen = new GridBagPanel {
     override def paintComponent(g: Graphics2D) = {
-      g.drawImage(backgroundPic, 0, 0, null)
+      g.drawImage(backgroundPic.getImage, 0, 0, null)
     }
     val scoreInfo = new Label{text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE}
     val c = new Constraints
