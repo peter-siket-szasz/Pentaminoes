@@ -61,7 +61,8 @@ object GameWindow extends SimpleSwingApplication {
   }
   
   def updateGrids() = {
-    showHypo()
+    grid.colors = Grid.colors
+    grid.edges = Grid.edges
     currentPentamino.colors = Game.currentPentamino.toVector
     currentPentamino.edges  = Game.currentPentamino.twoBooleanEdges
     nextPentamino.colors = Game.nextPentamino.toVector
@@ -261,6 +262,7 @@ object GameWindow extends SimpleSwingApplication {
       case MouseClicked(_, point, _, _, _)  => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
         updateGrids()
+        showHypo()
         updateLabels()
         frame.repaint()
         if (!Game.gameOn)gameOver
@@ -269,8 +271,8 @@ object GameWindow extends SimpleSwingApplication {
         if (component == grid) {
           mousePosx = point.x / blockSize
           mousePosy = point.y / blockSize
-        }
-        updateGrids()
+          showHypo()
+        } else updateGrids()
         frame.repaint()
         gameScreen.requestFocus
       }
@@ -303,6 +305,7 @@ object GameWindow extends SimpleSwingApplication {
           mousePosy = 3
         }
         updateGrids()
+        showHypo()
         updateLabels()
         frame.repaint()
         if (!Game.gameOn) gameOver
