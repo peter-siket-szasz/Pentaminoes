@@ -170,7 +170,7 @@ class Grid {
     }
     points *= rows //multiple rows earns more points
     removeList.foreach{coordinate => remove(coordinate._1, coordinate._2)}
-    (points.round.toInt, rows.toInt)
+    (points.round.toInt, rows.round.toInt)
   }
   
   def checkIfMovesPossible(pentamino: Pentamino): Boolean = {

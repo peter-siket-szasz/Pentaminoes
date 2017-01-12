@@ -54,7 +54,7 @@ object Highscore {
       for (line <- file.getLines().take(listLenght)) {
         val data = line.split(" ")
         try { highscores += Some(Tuple4(data(0), data(1).toInt, data(2).toInt, data(3).toInt)) }
-        catch { case ex: Exception => highscores += None; println(ex) }
+        catch { case ex: Exception => highscores += None }
         highscoresAsOptionString += Some(line)
       }
     } finally {
@@ -74,8 +74,6 @@ object Highscore {
     }
     file.close()
     this.updateVariables()
-    
-    println(this.getHighscoreListAsString.mkString("\n"))
   }
   
   private def findPosition(name: String, score: Int, level: Int, rows: Int): Int = {
