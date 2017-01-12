@@ -16,7 +16,7 @@ import javax.imageio.ImageIO
 object GameWindow extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
   
-  private var Grid = Game.grid
+  var Grid = Game.grid
   
   val gridSize = Grid.size
   val blockSize = 50
@@ -44,15 +44,15 @@ object GameWindow extends SimpleSwingApplication {
   val nextPentamino = new Display(nextGridSize, nextGridSize, Game.nextPentamino.toVector, 
       Game.nextPentamino.twoBooleanEdges, smallBlockSize)
   
-  private def scoreText = "Score: " + Game.score
-  private def levelText = "Level: " + Game.level
-  private def rowsText = "Rows: " + Game.rowsToNextLevel
-  private def updateLabels() = {
+  def scoreText = "Score: " + Game.score
+  def levelText = "Level: " + Game.level
+  def rowsText = "Rows: " + Game.rowsToNextLevel
+  def updateLabels() = {
     score.text = scoreText
     level.text = levelText
     rows.text = rowsText
   }
-  private def updateHighscores() = {
+  def updateHighscores() = {
     val scores = Highscore.getHighscoreListAsString
     for (i <- 0 until highscores.size) {
       highscores(i).text = s"${i+1}: ${scores(i)}"
@@ -60,7 +60,7 @@ object GameWindow extends SimpleSwingApplication {
     }
   }
   
-  private def updateGrids() = {
+  def updateGrids() = {
     showHypo()
     currentPentamino.colors = Game.currentPentamino.toVector
     currentPentamino.edges  = Game.currentPentamino.twoBooleanEdges
@@ -68,7 +68,7 @@ object GameWindow extends SimpleSwingApplication {
     nextPentamino.edges  = Game.nextPentamino.twoBooleanEdges
   }
   
-  private def showHypo() = {
+  def showHypo() = {
     def hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, mousePosx, mousePosy)
     grid.colors = hypoGrid.colors
     grid.edges = hypoGrid.edges
@@ -216,9 +216,9 @@ object GameWindow extends SimpleSwingApplication {
     frame.repaint() 
   }
   
-  val startGame = Action("New game")(newGame)
+  val startGame = new MenuItem(Action("New game")(newGame))
   
-  val endGame = Action("End game")(gameOver)
+  val endGame = new MenuItem(Action("End game")(gameOver)){enabled = false}
   
   
   def gameOver: Unit = {
@@ -247,8 +247,8 @@ object GameWindow extends SimpleSwingApplication {
 
     menuBar = new MenuBar {
       contents += new Menu("Game") {
-        contents += new MenuItem(startGame)
-        contents += new MenuItem(endGame)
+        contents += startGame
+        contents += endGame
       }
     }
     contents = menuScreen
@@ -263,7 +263,7 @@ object GameWindow extends SimpleSwingApplication {
         updateGrids()
         updateLabels()
         frame.repaint()
-        if (!Game.gameOn) gameOver
+        if (!Game.gameOn)gameOver
       }
       case MouseMoved(component, point, _) => {
         if (component == grid) {
@@ -283,6 +283,7 @@ object GameWindow extends SimpleSwingApplication {
         else if (source == scoreButton) {this.contents = highscoreScreen; updateHighscores()}
         else if (source == menuButton)  this.contents = menuScreen
         else if (source == quitButton)  dispose()
+        endGame.enabled = this.contents(0) == gameScreen
         updateGrids()
         frame.repaint()
         gameScreen.requestFocus

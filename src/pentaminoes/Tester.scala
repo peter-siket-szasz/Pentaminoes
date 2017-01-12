@@ -1,8 +1,10 @@
 package pentaminoes
+import gui._
 
 object Tester extends App{
   
-  //val Grid = new Grid()
+  /*val Grid = new Grid()
+  val gameWindow = GameWindow*/
   
   /*
   println(Pentamino.p(1,1,1,1,1).toString)

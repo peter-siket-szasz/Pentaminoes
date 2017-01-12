@@ -5,6 +5,4 @@ Anonymous 220 3 13
 c3 210 3 14
 Anonymous 200 3 15
 :( 140 2 7
-Anonymous 0 1 0
-Anonymous 0 1 0
-Anonymous 0 1 0
+
