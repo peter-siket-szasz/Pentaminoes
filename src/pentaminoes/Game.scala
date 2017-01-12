@@ -31,6 +31,7 @@ object Game {
     
     _gameOn = true
     
+    GameSounds.playMusic()
     grid.initialize()
   }
   
@@ -51,6 +52,7 @@ object Game {
       val rows = pointsAndRows._2
       
       this.addScore(points)
+      GameSounds.playPlacementSound()
       
       if (points > 0) {
         this.rows += rows
