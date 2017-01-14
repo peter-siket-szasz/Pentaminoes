@@ -26,11 +26,11 @@ private object GameWindow extends SimpleSwingApplication {
   var mousePosx = 3
   var mousePosy = 3
 
-  val verticalPic = new ImageIcon("Icons/flipVertical.png")
-  val horizontalPic = new ImageIcon("Icons/flipHorizontal.png")
-  val clockwisePic = new ImageIcon("Icons/rotateClockwise.png")
+  val verticalPic =         new ImageIcon("Icons/flipVertical.png")
+  val horizontalPic =       new ImageIcon("Icons/flipHorizontal.png")
+  val clockwisePic =        new ImageIcon("Icons/rotateClockwise.png")
   val counterclockwisePic = new ImageIcon("Icons/rotateCounterclockwise.png")
-  val backgroundPic = new ImageIcon("Icons/background.png")
+  val backgroundPic =       new ImageIcon("Icons/background.png")
 
   val defaultFont = new Font("Castellar", 0, 30)
 
@@ -44,11 +44,11 @@ private object GameWindow extends SimpleSwingApplication {
 
   def scoreText = "Score: " + Game.score
   def levelText = "Level: " + Game.level
-  def rowsText = "Rows: " + Game.rowsToNextLevel
+  def rowsText  = "Rows: " + Game.rowsToNextLevel
   def updateLabels() = {
     score.text = scoreText
     level.text = levelText
-    rows.text = rowsText
+    rows.text  = rowsText
   }
   def updateHighscores() = {
     val scores = Highscore.getHighscoreListAsString
@@ -60,22 +60,22 @@ private object GameWindow extends SimpleSwingApplication {
 
   def updateGrids() = {
     grid.colors = Grid.colors
-    grid.edges = Grid.edges
+    grid.edges  = Grid.edges
     currentPentamino.colors = Game.currentPentamino.toVector
-    currentPentamino.edges = Game.currentPentamino.twoBooleanEdges
+    currentPentamino.edges  = Game.currentPentamino.twoBooleanEdges
     nextPentamino.colors = Game.nextPentamino.toVector
-    nextPentamino.edges = Game.nextPentamino.twoBooleanEdges
+    nextPentamino.edges  = Game.nextPentamino.twoBooleanEdges
   }
 
   def showHypo() = {
     def hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, mousePosx, mousePosy)
     grid.colors = hypoGrid.colors
-    grid.edges = hypoGrid.edges
+    grid.edges  = hypoGrid.edges
   }
 
   val score = new Label { text = scoreText; preferredSize = new Dimension(250, 45); font = defaultFont }
   val level = new Label { text = levelText; preferredSize = new Dimension(200, 45); font = defaultFont }
-  val rows = new Label { text = rowsText; preferredSize = new Dimension(250, 45); font = defaultFont }
+  val rows  = new Label { text = rowsText; preferredSize = new Dimension(250, 45); font = defaultFont }
 
   val highscores =
     Array.fill[Label](Highscore.getHighscoreList.size)(new Label { font = defaultFont; foreground = Color.WHITE })
@@ -234,6 +234,7 @@ private object GameWindow extends SimpleSwingApplication {
       else newGame
     }
     GameSounds.stopMusic()
+    endGame.enabled = frame.contents(0) == gameScreen
     frame.repaint()
   }
 
@@ -253,7 +254,8 @@ private object GameWindow extends SimpleSwingApplication {
     contents = menuScreen
     menuScreen.requestFocus
 
-    listenTo(grid.mouse.clicks, gameScreen.mouse.moves, grid.mouse.moves, grid.keys, gameScreen.keys)
+    listenTo(grid.mouse.clicks, grid.mouse.moves, grid.mouse.wheel)
+    listenTo(gameScreen.mouse.moves, gameScreen.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
     listenTo(playButton, scoreButton, menuButton, quitButton)
     reactions += {
@@ -275,9 +277,9 @@ private object GameWindow extends SimpleSwingApplication {
         gameScreen.requestFocus
       }
       case ButtonClicked(source) => {
-        if (source == flipHorizontally) Game.currentPentamino.flipHorizontal()
-        else if (source == flipVertically) Game.currentPentamino.flipVertical()
-        else if (source == rotateClockwise) Game.currentPentamino.rotateClockwise()
+        if (source == flipHorizontally)            Game.currentPentamino.flipHorizontal()
+        else if (source == flipVertically)         Game.currentPentamino.flipVertical()
+        else if (source == rotateClockwise)        Game.currentPentamino.rotateClockwise()
         else if (source == rotateCounterclockwise) Game.currentPentamino.rotateCounterClockwise()
         else if (source == playButton) newGame
         else if (source == scoreButton) { this.contents = highscoreScreen; updateHighscores() }
@@ -289,14 +291,14 @@ private object GameWindow extends SimpleSwingApplication {
         gameScreen.requestFocus
       }
       case KeyPressed(_, key, _, _) => {
-        if (key == Key.A) Game.currentPentamino.rotateCounterClockwise()
+        if (key == Key.A)      Game.currentPentamino.rotateCounterClockwise()
         else if (key == Key.D) Game.currentPentamino.rotateClockwise()
         else if (key == Key.W) Game.currentPentamino.flipVertical()
         else if (key == Key.S) Game.currentPentamino.flipHorizontal()
-        else if (key == Key.Up) mousePosy = Math.max(mousePosy - 1, 0)
-        else if (key == Key.Down) mousePosy = Math.min(mousePosy + 1, gridSize - 1)
+        else if (key == Key.Up)    mousePosy = Math.max(mousePosy - 1, 0)
+        else if (key == Key.Down)  mousePosy = Math.min(mousePosy + 1, gridSize - 1)
         else if (key == Key.Right) mousePosx = Math.min(mousePosx + 1, gridSize - 1)
-        else if (key == Key.Left) mousePosx = Math.max(mousePosx - 1, 0)
+        else if (key == Key.Left)  mousePosx = Math.max(mousePosx - 1, 0)
         else if (key == Key.M) GameSounds.muteMusic()
         else if (key == Key.N) GameSounds.muteEffects()
         else if (key == Key.Enter) {
@@ -309,6 +311,13 @@ private object GameWindow extends SimpleSwingApplication {
         updateLabels()
         frame.repaint()
         if (!Game.gameOn) gameOver
+      }
+      case MouseWheelMoved(_,_,_,rot) => {
+        if (rot > 0) Game.currentPentamino.rotateClockwise()
+        else if (rot < 0) Game.currentPentamino.rotateCounterClockwise()
+        updateGrids()
+        showHypo()
+        frame.repaint()
       }
     }
   }
