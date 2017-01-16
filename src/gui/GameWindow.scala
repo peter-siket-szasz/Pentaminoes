@@ -128,11 +128,20 @@ private object GameWindow extends SimpleSwingApplication {
     text = "Quit"
     font = defaultFont
   }
+  
+  val infoButton = new Button {
+    preferredSize = new Dimension(250,50)
+    text = "Help"
+    font = defaultFont
+  }
+  
+  val backButton = new Button {
+    preferredSize = new Dimension(250,50)
+    text = "Back"
+    font = defaultFont
+  }
 
-  val gameScreen = new GridBagPanel {
-    override def paintComponent(g: Graphics2D) = {
-      g.drawImage(backgroundPic.getImage, 0, 0, null)
-    }
+  val gameScreen = new Screen {
     focusable = true
     val c = new Constraints
     c.gridx = 0
@@ -174,23 +183,19 @@ private object GameWindow extends SimpleSwingApplication {
     layout(nextPentamino) = c
   }
 
-  val menuScreen = new GridBagPanel {
-    override def paintComponent(g: Graphics2D) = {
-      g.drawImage(backgroundPic.getImage, 0, 0, null)
-    }
+  val menuScreen = new Screen {
     val c = new Constraints
     c.insets = new Insets(13, 0, 13, 0)
     layout(playButton) = c
     c.gridy = 2
     layout(scoreButton) = c
     c.gridy = 4
+    layout(infoButton) = c
+    c.gridy = 6
     layout(quitButton) = c
   }
 
-  val highscoreScreen = new GridBagPanel {
-    override def paintComponent(g: Graphics2D) = {
-      g.drawImage(backgroundPic.getImage, 0, 0, null)
-    }
+  val highscoreScreen = new Screen {
     val scoreInfo = new Label { text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE }
     val c = new Constraints
     c.gridx = 0
@@ -204,9 +209,36 @@ private object GameWindow extends SimpleSwingApplication {
     }
     layout(menuButton) = c
   }
+  
+  val infoScreen = new Screen {
+    val instructions = new TextArea(5,30) {
+      text = "-The goal of the game is to create as many rows of 4 of the same color as possible.\n " +
+             "-You can rotate and flip the pentaminoes with the buttons on screen, the mouse wheel or the WASD keys.\n " +
+             "-You can move the pentaminoes with your mouse or the arrow keys.\n " + 
+             "-Longers rows give more points, but are harder to make. "
+      wordWrap = true
+      lineWrap = true
+      font = defaultFont
+      editable = false
+      opaque = false
+      foreground = Color.WHITE
+    }
+    val infoColors = Vector.fill(7,7)(Random.nextInt(5))
+    val infoGrid = new Display(7,1,infoColors,Vector(Vector()),30)
+    val c = new Constraints
+    c.gridx = 0
+    c.gridy = 0
+    layout(instructions) = c
+    c.gridy += 1
+    layout(infoGrid) = c
+    c.insets = new Insets(20,0,0,0)
+    c.gridy += 1
+    layout(backButton) = c
+  }
 
   def newGame = {
     Game.newGame
+    endGame.enabled = true
     mousePosx = 3
     mousePosy = 3
     updateLabels()
@@ -230,10 +262,12 @@ private object GameWindow extends SimpleSwingApplication {
       Game.newGame
     } else {
       val popup = Dialog.showConfirmation(gameScreen, "Game over! Do you want to play again?", "Game over", Dialog.Options.YesNo)
-      if (popup == Dialog.Result.No) frame.contents = menuScreen
+      if (popup == Dialog.Result.No) {
+        frame.contents = menuScreen
+        GameSounds.stopMusic()
+      }
       else newGame
     }
-    GameSounds.stopMusic()
     endGame.enabled = frame.contents(0) == gameScreen
     frame.repaint()
   }
@@ -257,7 +291,7 @@ private object GameWindow extends SimpleSwingApplication {
     listenTo(grid.mouse.clicks, grid.mouse.moves, grid.mouse.wheel)
     listenTo(gameScreen.mouse.moves, gameScreen.keys)
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
-    listenTo(playButton, scoreButton, menuButton, quitButton)
+    listenTo(playButton, scoreButton, menuButton, infoButton, backButton, quitButton)
     reactions += {
       case MouseClicked(_, point, _, _, _) => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
@@ -284,6 +318,8 @@ private object GameWindow extends SimpleSwingApplication {
         else if (source == playButton) newGame
         else if (source == scoreButton) { this.contents = highscoreScreen; updateHighscores() }
         else if (source == menuButton) this.contents = menuScreen
+        else if (source == infoButton) this.contents = infoScreen
+        else if (source == backButton) this.contents = menuScreen
         else if (source == quitButton) dispose()
         endGame.enabled = this.contents(0) == gameScreen
         updateGrids()

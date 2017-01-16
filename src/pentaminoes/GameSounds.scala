@@ -5,8 +5,8 @@ import javax.sound.sampled.AudioSystem
 
 object GameSounds {
   
-  private val BGMFile = AudioSystem.getAudioInputStream(new File("src/sounds/music.wav"))
-  private val PSFile = AudioSystem.getAudioInputStream(new File("src/sounds/placementSound.wav"))
+  private val BGMFile = AudioSystem.getAudioInputStream(new File("sounds/music.wav"))
+  private val PSFile = AudioSystem.getAudioInputStream(new File("sounds/placementSound.wav"))
   
   private val BGMClip = AudioSystem.getClip()
   private val PSClip = AudioSystem.getClip()
