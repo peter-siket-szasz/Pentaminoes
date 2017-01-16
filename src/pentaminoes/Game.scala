@@ -57,6 +57,7 @@ object Game {
       if (points > 0) {
         this.rows += rows
         while (this.isLevelUp) this.nextLevel() //Level up from level 1 to 3 is possible in theory
+        GameSounds.playLineSound()
       }
       
       this.firstPentamino = this.secondPentamino

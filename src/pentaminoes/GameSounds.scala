@@ -7,12 +7,16 @@ object GameSounds {
   
   private val BGMFile = AudioSystem.getAudioInputStream(new File("sounds/music.wav"))
   private val PSFile = AudioSystem.getAudioInputStream(new File("sounds/placementSound.wav"))
+  private val LineFile = AudioSystem.getAudioInputStream(new File("sounds/lineSound.wav"))
+  
   
   private val BGMClip = AudioSystem.getClip()
   private val PSClip = AudioSystem.getClip()
+  private val LineClip = AudioSystem.getClip()
   
   BGMClip.open(BGMFile)
   PSClip.open(PSFile)
+  LineClip.open(LineFile)
 
   private var musicMuted = false
   private var effectsMuted = false
@@ -31,6 +35,13 @@ object GameSounds {
     }
   }
 
+  def playLineSound() = {
+    if (!effectsMuted) {
+      LineClip.setMicrosecondPosition(0)
+      LineClip.start()
+    }
+  }
+  
   def muteMusic() = {
     musicMuted = !musicMuted
     if (musicMuted) {
