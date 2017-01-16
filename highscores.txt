@@ -1,8 +1,9 @@
 score? 2000 2 5
 Antgoblin 450 5 40
+Anonymous 300 4 21
 Péter 260 4 20
 Anonymous 220 3 13
 c3 210 3 14
 Anonymous 200 3 15
 :( 140 2 7
-
+Anonymous 20 1 1
