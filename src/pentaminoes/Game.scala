@@ -57,6 +57,7 @@ object Game {
       if (points > 0) {
         this.rows += rows
         while (this.isLevelUp) this.nextLevel() //Level up from level 1 to 3 is possible in theory
+        GameSounds.playLineSound()
       }
       
       this.firstPentamino = this.secondPentamino
@@ -64,11 +65,6 @@ object Game {
     }
     
     if ( ! this.possibleMovesLeft) {
-
-      /*if (Highscore.isScoreEnough(this.currentScore,this.currentLevel,this.rows)){
-        println("You are " + Highscore.setNewScore("testi",this.currentScore,this.currentLevel,this.rows) + " in highscore list.")
-      } else println("You don't have enough points. Better luck next time.")*/
-      
       this._gameOn = false
     }
   }
