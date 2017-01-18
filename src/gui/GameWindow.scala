@@ -212,8 +212,9 @@ private object GameWindow extends SimpleSwingApplication {
   
   val infoScreen = new Screen {
     val instructions = new TextArea(5,30) {
-      text = "-The goal of the game is to create as many rows of atleast 4 of the same color as possible.\n " +
+      text = "-The goal of the game is to create as many rows of at least 4 of the same color as possible.\n " +
              "-Longers rows give more points, but are harder to make. \n" +
+             "-A row clears all pentaminoes that have blocks in it. \n" +
              "-You can rotate and flip the pentaminoes with the buttons on screen, the mouse wheel or the WASD keys.\n " +
              "-You can move the pentaminoes with your mouse or the arrow keys.\n " +
              "-You can set music on/off with 'm' and soundeffects with 'n'."
