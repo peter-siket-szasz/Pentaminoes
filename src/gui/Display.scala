@@ -8,27 +8,32 @@ class Display(width: Int, height: Int, var colors: grid, var edges: Vector[Vecto
   extends GridPanel(width, height) {
     preferredSize = new Dimension(width * blockSize, width * blockSize)
 
+    //Override paintComponent with the paint method defined in the companion object
     override def paintComponent(g: Graphics2D) = 
       Display.paintLinesAndSquares(g, colors, edges, blockSize)
   }
 
 
-
 object Display {
   
+  //This Vector is used to convert int values to colors for drawing
   val numbersToColors = Vector(Color.WHITE, Color.YELLOW, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.RED, Color.BLUE)
   
+  //Paints the edges of pentaminoes in grids. Each square has a (Boolean, Boolean) value. The first value determines if
+  //the square has the top edge, the second one the left edge.
   def paintEdges(g: Graphics2D, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
     val height = edges(0).size
     val width = edges.size
     g.setColor(Color.BLACK)
     for (row <- 0 until height) {
       for (col <- 0 until width) {
+        //No edges are drawn at the sides of grids. Horizontal edges here, 3 pixels wide.
         if (edges(row)(col)(0) && row != 0) {
           for (i <- -1 to 1) {
             g.drawLine(col * blockSize, row * blockSize + i, (col + 1) * blockSize, row * blockSize + i)
           }
         }
+        //Vertical edges here.
         if (edges(row)(col)(1) && col !=0) {
           for (i <- -1 to 1) {
             g.drawLine(col * blockSize + i, row * blockSize, col * blockSize + i, (row + 1) * blockSize)
@@ -38,6 +43,7 @@ object Display {
     }
   }
   
+  //Paints the whole grid. First the colored squares, then the grid, and finally the edges for pentaminoes.
   def paintLinesAndSquares(g: Graphics2D, colors: grid, edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) = {
     val sidex = colors(0).size
     val sidey = colors.size
