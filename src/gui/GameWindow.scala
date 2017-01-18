@@ -212,10 +212,11 @@ private object GameWindow extends SimpleSwingApplication {
   
   val infoScreen = new Screen {
     val instructions = new TextArea(5,30) {
-      text = "-The goal of the game is to create as many rows of 4 of the same color as possible.\n " +
+      text = "-The goal of the game is to create as many rows of atleast 4 of the same color as possible.\n " +
+             "-Longers rows give more points, but are harder to make. \n" +
              "-You can rotate and flip the pentaminoes with the buttons on screen, the mouse wheel or the WASD keys.\n " +
-             "-You can move the pentaminoes with your mouse or the arrow keys.\n " + 
-             "-Longers rows give more points, but are harder to make. "
+             "-You can move the pentaminoes with your mouse or the arrow keys.\n " +
+             "-You can set music on/off with 'm' and soundeffects with 'n'."
       wordWrap = true
       lineWrap = true
       font = defaultFont
@@ -223,17 +224,33 @@ private object GameWindow extends SimpleSwingApplication {
       opaque = false
       foreground = Color.WHITE
     }
-    val infoColors = Vector.fill(7,7)(Random.nextInt(5))
-    val infoGrid = new Display(7,1,infoColors,Vector(Vector()),30)
+    val infoGridData = new Grid
+    infoGridData.add(Pentamino('f',2,3,3,1,1).flipVertical(), 2, 2)
+    infoGridData.add(Pentamino('p',1,1,2,2,1).flipVertical().rotateClockwise(), 4, 3)
+    val infoGrid0 = new Display(7,1,infoGridData.colors,infoGridData.edges,30)
+    infoGridData.add(Pentamino('l',3,3,2,2,3).rotateCounterClockwise(), 3,5)
+    val infoGrid1 = new Display(7,1,infoGridData.colors,infoGridData.edges,30)
+    infoGridData.remove(2,2)
+    infoGridData.remove(3,5)
+    val infoGrid2 = new Display(7,1,infoGridData.colors, infoGridData.edges, 30)
     val c = new Constraints
+    c.gridwidth = 5
     c.gridx = 0
     c.gridy = 0
     layout(instructions) = c
+    c.gridwidth = 1
     c.gridy += 1
-    layout(infoGrid) = c
-    c.insets = new Insets(20,0,0,0)
+    c.gridx = 1
+    c.insets = new Insets(30,60,0,0)
+    layout(infoGrid0) = c
+    c.gridx = 2
+    layout(infoGrid1) = c
+    c.gridx = 3
+    layout(infoGrid2) = c
     c.gridy += 1
+    c.gridx = 2
     layout(backButton) = c
+    
   }
 
   def newGame = {
