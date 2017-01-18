@@ -16,6 +16,8 @@ private object GameWindow extends SimpleSwingApplication {
 
   var Grid = Game.grid
 
+  
+  //Variables defined 
   val gridSize = Grid.size
   val blockSize = 50
   val smallBlockSize = 25
@@ -26,6 +28,7 @@ private object GameWindow extends SimpleSwingApplication {
   var mousePosx = 3
   var mousePosy = 3
 
+  //ImageIcons as pictures
   val verticalPic =         new ImageIcon("Icons/flipVertical.png")
   val horizontalPic =       new ImageIcon("Icons/flipHorizontal.png")
   val clockwisePic =        new ImageIcon("Icons/rotateClockwise.png")
@@ -34,17 +37,22 @@ private object GameWindow extends SimpleSwingApplication {
 
   val defaultFont = new Font("Castellar", 0, 30)
 
+  //Main game grid
   val grid = new Display(gridSize, gridSize, Grid.colors, Grid.edges, blockSize)
 
+  //The next 2 pentaminoes displayed
   val currentPentamino = new Display(nextGridSize, nextGridSize, Game.currentPentamino.toVector,
     Game.currentPentamino.twoBooleanEdges, smallBlockSize)
 
   val nextPentamino = new Display(nextGridSize, nextGridSize, Game.nextPentamino.toVector,
     Game.nextPentamino.twoBooleanEdges, smallBlockSize)
 
+  //Text strings for the scoreboard in game
   def scoreText = "Score: " + Game.score
   def levelText = "Level: " + Game.level
   def rowsText  = "Rows: " + Game.rowsToNextLevel
+  
+  //Update methods for game elements
   def updateLabels() = {
     score.text = scoreText
     level.text = levelText
@@ -67,25 +75,30 @@ private object GameWindow extends SimpleSwingApplication {
     nextPentamino.edges  = Game.nextPentamino.twoBooleanEdges
   }
 
+  
+  //Shows what the move would do if the next pentamino was placed on the current position
   def showHypo() = {
     def hypoGrid = Grid.hypotheticalAdd(Game.currentPentamino, mousePosx, mousePosy)
     grid.colors = hypoGrid.colors
     grid.edges  = hypoGrid.edges
   }
-
+ 
+  //Scoreboard created here
   val score = new Label { text = scoreText; preferredSize = new Dimension(250, 45); font = defaultFont }
   val level = new Label { text = levelText; preferredSize = new Dimension(200, 45); font = defaultFont }
   val rows  = new Label { text = rowsText; preferredSize = new Dimension(250, 45); font = defaultFont }
-
-  val highscores =
-    Array.fill[Label](Highscore.getHighscoreList.size)(new Label { font = defaultFont; foreground = Color.WHITE })
 
   val scoreBoard = new FlowPanel {
     contents += score
     contents += level
     contents += rows
   }
+  
+  //Array to score highscores within labels
+  val highscores =
+    Array.fill[Label](Highscore.getHighscoreList.size)(new Label { font = defaultFont; foreground = Color.WHITE })
 
+  //Buttons created here
   val flipHorizontally = new Button {
     preferredSize = new Dimension(100, 100)
     icon = horizontalPic
@@ -141,6 +154,8 @@ private object GameWindow extends SimpleSwingApplication {
     font = defaultFont
   }
 
+  
+  //The main game screen, lots of insets to align components
   val gameScreen = new Screen {
     focusable = true
     val c = new Constraints
@@ -183,6 +198,7 @@ private object GameWindow extends SimpleSwingApplication {
     layout(nextPentamino) = c
   }
 
+  //The main menu screen
   val menuScreen = new Screen {
     val c = new Constraints
     c.insets = new Insets(13, 0, 13, 0)
@@ -195,6 +211,8 @@ private object GameWindow extends SimpleSwingApplication {
     layout(quitButton) = c
   }
 
+  
+  //Highscore screen, labels under each other
   val highscoreScreen = new Screen {
     val scoreInfo = new Label { text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE }
     val c = new Constraints
@@ -210,6 +228,7 @@ private object GameWindow extends SimpleSwingApplication {
     layout(menuButton) = c
   }
   
+  //Instruction screen, instructions as string and a demonstration of creating a row
   val infoScreen = new Screen {
     val instructions = new TextArea(5,30) {
       text = "-The goal of the game is to create as many rows of at least 4 of the same color as possible.\n " +
@@ -254,6 +273,7 @@ private object GameWindow extends SimpleSwingApplication {
     
   }
 
+  //Resets the game and display and displays the gameScreen
   def newGame = {
     Game.newGame
     endGame.enabled = true
@@ -265,10 +285,13 @@ private object GameWindow extends SimpleSwingApplication {
     frame.repaint()
   }
 
+  //Menu items to start a game and end the current game
   val startGame = new MenuItem(Action("New game")(newGame))
 
   val endGame = new MenuItem(Action("End game")(gameOver)) { enabled = false }
 
+  
+  //Called when the game ends, checks if your score is high enough to get on the highscores, if so asks for a name.
   def gameOver: Unit = {
     if (Highscore.isScoreEnough(Game.score, Game.level, Game.rows)) {
       val popup = Dialog.showInput(gameScreen, "Your score is eligible for the Highscore list!", "Highscore!", Dialog.Message.Info, initial = "Insert name")
@@ -290,6 +313,7 @@ private object GameWindow extends SimpleSwingApplication {
     frame.repaint()
   }
 
+  //The MainFrame of the program
   val frame: MainFrame = new MainFrame {
 
     title = "Pentaminoes"
@@ -311,6 +335,7 @@ private object GameWindow extends SimpleSwingApplication {
     listenTo(flipHorizontally, flipVertically, rotateClockwise, rotateCounterclockwise)
     listenTo(playButton, scoreButton, menuButton, infoButton, backButton, quitButton)
     reactions += {
+      //Place the next pentamino at the mouse position
       case MouseClicked(_, point, _, _, _) => {
         Game.placePentamino(point.x / blockSize, point.y / blockSize)
         updateGrids()
@@ -319,6 +344,7 @@ private object GameWindow extends SimpleSwingApplication {
         frame.repaint()
         if (!Game.gameOn) gameOver
       }
+      //Show the next move at the current mouse position
       case MouseMoved(component, point, _) => {
         if (component == grid) {
           mousePosx = point.x / blockSize
@@ -328,6 +354,7 @@ private object GameWindow extends SimpleSwingApplication {
         frame.repaint()
         gameScreen.requestFocus
       }
+      //Reactions of all the buttons in the displays
       case ButtonClicked(source) => {
         if (source == flipHorizontally)            Game.currentPentamino.flipHorizontal()
         else if (source == flipVertically)         Game.currentPentamino.flipVertical()
@@ -344,6 +371,7 @@ private object GameWindow extends SimpleSwingApplication {
         frame.repaint()
         gameScreen.requestFocus
       }
+      //Game can be controlled with keys, move and rotate pentaminoes and mute/enable sounds.
       case KeyPressed(_, key, _, _) => {
         if (key == Key.A)      Game.currentPentamino.rotateCounterClockwise()
         else if (key == Key.D) Game.currentPentamino.rotateClockwise()
@@ -366,6 +394,7 @@ private object GameWindow extends SimpleSwingApplication {
         frame.repaint()
         if (!Game.gameOn) gameOver
       }
+      //Rotate pentaminoes with the mouse wheel
       case MouseWheelMoved(_,_,_,rot) => {
         if (rot > 0) Game.currentPentamino.rotateClockwise()
         else if (rot < 0) Game.currentPentamino.rotateCounterClockwise()
@@ -375,7 +404,8 @@ private object GameWindow extends SimpleSwingApplication {
       }
     }
   }
-
+  
+  //This is called when the program is run.
   def top: MainFrame = frame
 }
   
