@@ -9,7 +9,7 @@ object Game {
   private var numberOfColors = 2
   private var currentLevel = 1
   private var currentScore = 0
-  var rows = 0 //Counts the number of moves which have scored points
+  var rows = 0
   private var nextLevelLimit = 5
   
   private var firstPentamino = this.randomPentamino
@@ -35,6 +35,9 @@ object Game {
     grid.initialize()
   }
   
+  /*Creates random pentamino
+   *Calls Pentamino objects method: random.
+   */
   def randomPentamino = {
     var randomInts = Array.fill(5)(0)
     while ( (randomInts.map(color => randomInts.count(_ == color))).reduceLeft(_ max _) >= 4 ) {
@@ -43,6 +46,9 @@ object Game {
     Pentamino.random(randomInts(0), randomInts(1), randomInts(2), randomInts(3), randomInts(4))
   }
   
+  /*Places pentamino to Grid, updates points and check if game should end.
+   *Calls other objects and classes methods.
+   */
   def placePentamino(x: Int, y: Int) = {
     val isPlaced = grid.add(this.currentPentamino, x, y)
 
@@ -78,11 +84,6 @@ object Game {
     grid.canBePlaced(x, y)
   }
   
-  // Returns a Vector of coordinates in which the current Pentamino (if played in coordinates (x,y)) overlaps another Pentamino
-  def overlaps(x: Int, y: Int): Array[Tuple2[Int,Int]] = {
-    ??? // TODO calls grid's methods
-  }
-  
   def currentPentamino = this.firstPentamino
   
   def nextPentamino = this.secondPentamino
@@ -92,12 +93,14 @@ object Game {
   
   def level = this.currentLevel
   
+  //Handles level-ups.
   def nextLevel() = {
     this.currentLevel += 1
     this.numberOfColors += 1
     this.nextLevelLimit *= 2
   }
   
+  //Tests if it's time to level-up.
   def isLevelUp = this.rows >= this.nextLevelLimit
   
   def score = this.currentScore
