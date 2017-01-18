@@ -12,7 +12,6 @@ class Grid {
   
   private val minRowLength = 4
   private var pentaminoCounter = 0
- // private var lastPentamino: Option[Pentamino] = None
   
   override def toString = {
     var text = ""
@@ -21,6 +20,7 @@ class Grid {
     }
     text
   }
+  
   def colors: Vector[Vector[Int]] = this._colors.map(_.toVector).toVector 
   def pentaminoes: Vector[Vector[Option[Pentamino]]] = this._pentaminoes.map(_.toVector).toVector
   def edges: Vector[Vector[Vector[Boolean]]] = this._edges.map(_.map(_.toVector).toVector).toVector
@@ -28,18 +28,20 @@ class Grid {
   def colorAt(x: Int, y: Int) = this._colors(y)(x)
   def pentaminoAt(x: Int, y: Int) = this._pentaminoes(y)(x)
 
+  //Removes everything from Grids memory
   def initialize(): Unit = { 
     this._colors = Array.ofDim[Int](size, size)
     this._pentaminoes =  Array.ofDim[Option[Pentamino]](size,size)
     this._edges = Array.ofDim[Boolean](size, size, 2)
   } 
   
-  //jos annetussa kohdassa ei ole jotain väriarvoa (nollaa), palauttaa true, muuten false
+  //Test if given coordinates is empty (its color is 0)
   def canBePlaced(x: Int, y: Int): Boolean = colorAt(x, y) == 0
 
   //Tests if given coordinate is outside of the grid.
   def isOutOfBounds(x: Int, y: Int): Boolean = x < 0 || y < 0 || x >= size || y >= size
   
+  //Test if pentamino can be placed to given coordinates
   def pentaminoCanBePlaced(x: Int, y: Int, pentamino: Pentamino): Boolean = {
     for (x1 <- -2 to 2; y1 <- -2 to 2) {
       if ((pentamino(y1,x1) != 0) && (isOutOfBounds(x + x1, y + y1) || !canBePlaced(x + x1, y + y1))) {
@@ -49,7 +51,10 @@ class Grid {
     true
   }
   
-  //lisää pentaminon ja sen värit arrayhyn jos kaikilla kohdilla on tyhjää ja väriä ei yritetä lisätä sallitun alueen ulkopuolelle 
+  /*Pentamino is placed to given coordinates if its possible.
+   * Returns true or false depending of if placement was succesful or not.
+   */
+
   def add(pent: Pentamino, x: Int, y: Int): Boolean = {
 
     var pentaminoCanBePlace = this.pentaminoCanBePlaced(x, y, pent)
@@ -76,13 +81,13 @@ class Grid {
     }
   }
 
-  //poistaa annetussa kohdassa olevan pentaminon ja kaikki sen osat molemmista taulukoista
-  def remove(x: Int, y: Int) { //kohta (0,0) on sallitun alueen ulkopuolella
-    val poistettava = pentaminoAt(x, y) 
+  //Removes the pentamino in given coordinates
+  def remove(x: Int, y: Int) {
+    val removedPentamino = pentaminoAt(x, y) 
 
-    if (poistettava != None) {
+    if (removedPentamino != None) {
       for (x1 <- 0 until this.size; y1 <- 0 until this.size) {
-        if (pentaminoAt(x1, y1) == poistettava) {
+        if (pentaminoAt(x1, y1) == removedPentamino) {
           if ( !this.isOutOfBounds(x1+1, y1) && colorAt(x1 + 1, y1)==0 )
             this._edges(y1)(x1 + 1)(1) = false
           if ( this.isOutOfBounds(x1, y1-1) || colorAt(x1, y1-1)==0 )
@@ -99,6 +104,9 @@ class Grid {
     }
   }
   
+  /*Returns an instance of Grid in which Pentamino was placed to given coordinates if possible.
+   *Method is used to show the player where pentamino would be placed if player clicked now.
+   */
   def hypotheticalAdd(pent: Pentamino, x: Int, y: Int): Grid = {
     val hypotheticalGrid = new Grid()
     hypotheticalGrid._colors = Array.tabulate(size, size)(this.colors(_)(_))
@@ -107,7 +115,7 @@ class Grid {
     hypotheticalGrid
   }
   
-  //Returns points gained and number of rows made. Removes Pentaminoes which are part of rows.
+  //Returns points gained and number of rows made. Removes all pentaminoes which are part of rows.
   def checkRows(): (Int, Int) = {
     
     var points = 0.0
@@ -173,6 +181,9 @@ class Grid {
     (points.round.toInt, rows.round.toInt)
   }
   
+  /*Tests if it's possible to place current pentamino somewhere on the grid.
+   *Output is used to determine if player has lost.
+   */
   def checkIfMovesPossible(pentamino: Pentamino): Boolean = {
     
     var posibleMoveFound = false
@@ -189,39 +200,6 @@ class Grid {
     posibleMoveFound
   }
   
-  def copy: Grid = {
-    val anotherGrid = new Grid
-    anotherGrid._colors = this._colors.map(identity)
-    anotherGrid._pentaminoes = this._pentaminoes.map(identity)
-    anotherGrid._edges = this._edges.map(identity)
-    //println(anotherGrid.pentaminoes)
-    //println(this.pentaminoes)
-    anotherGrid
-  }
-
-  
-  
-  /*
-  //oma apumetodi gridien tarkasteluun kehitysvaiheessa
-  def tulosta = { 
-    for (x <- 0 until size) {
-      print(s"\n")
-      for (y <- 0 until size) {
-        print(this._colors(x)(y))
-      }
-    }
-  }
-
-  //oma apumetodi gridien tarkasteluun kehitysvaiheessa
-  def tulosta2 = {
-    for (x <- 0 until size) {
-      print(s"\n")
-      for (y <- 0 until size) {
-        print(this._pentaminoes(x)(y) + " ")
-      }
-    }
-  }
-  // */
 }
 
 

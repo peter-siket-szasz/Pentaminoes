@@ -3,24 +3,33 @@ package pentaminoes
 import scala.util.Random
 import Game.grid
 
-class Pentamino(private var array: Array[Array[Int]], private var edges: Array[Array[Array[Int]]]) {
+class Pentamino(private var colors: Array[Array[Int]], private var edges: Array[Array[Array[Int]]]) {
   
   override def toString: String = {
     var text = ""
     for (i <- Range(0,5)) {
-      text += this.array(i).mkString(" ") + "\n"
+      text += this.colors(i).mkString(" ") + "\n"
     }
     text
   }
   
-  def toVector: grid = this.array.map(_.toVector).toVector
+  //Returns the list of colors (ints) as 2-dimensional vector.
+  def toVector: grid = this.colors.map(_.toVector).toVector
   
-  def apply(x: Int, y:Int):Int = this.toVector(x+2)(y+2) //relative, (2,2) -> (0,0)
+  /* Returns the color of given coordinate
+   * Coordinates are relative to the center of pentamino. For example (0,0) means (2,2) and (-1, -2) means (1,0).
+   */
+  def apply(x: Int, y:Int):Int = this.toVector(x+2)(y+2)
   
+  /*Returns the list of pentaminos edges as 3-dimensional vector.
+   *First 2 dimension are 5*5 grid and last dimension is list of directions (int 1-4) in which a square has edges.
+   */
   def edgesVector: Vector[Vector[Vector[Int]]] = this.edges.map(_.map(_.toVector).toVector).toVector
   
+  //Returns the edges of square as vector. Coordinates are relative to (2,2).
   def edgesCentered(x: Int, y: Int):Vector[Int] = this.edgesVector(x+2)(y+2)
   
+  //Changes the edges to diffrent type which graphics uses.
   def twoBooleanEdges: Vector[Vector[Vector[Boolean]]] = {
     val edgesArray = Array.fill(Pentamino.size, Pentamino.size, 2)(false)
     for (x <- 0 until 5; y <- 0 until 5) {
@@ -35,6 +44,7 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
     edgesArray.map(_.map(_.toVector).toVector).toVector
   }
   
+  
   /* Rotate methods and flip methods and randomRotation all 
   both make changes to original Pentamino and return the modified version of it */
 
@@ -42,10 +52,10 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
     val newArray = Array.fill(5,5)(0)
     val newEdges = Array.fill(5,5)(Array(0))
     for (x <- Range(0,5); y <- Range(0,5)) {
-      newArray(x)(y) = this.array(4-y)(x)
+      newArray(x)(y) = this.colors(4-y)(x)
       newEdges(x)(y) = this.edges(4-y)(x).map{Map(1->4, 4->3, 3->2, 2->1, 0->0)}
     }
-    this.array = newArray
+    this.colors = newArray
     this.edges = newEdges
     this
   }
@@ -54,10 +64,10 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
     val newArray = Array.fill(5,5)(0)
     val newEdges = Array.fill(5,5)(Array(0))
     for (x <- Range(0,5); y <- Range(0,5)) {
-      newArray(x)(y) = this.array(y)(4-x)
+      newArray(x)(y) = this.colors(y)(4-x)
       newEdges(x)(y) = this.edges(y)(4-x).map{Map(1->2, 2->3, 3->4, 4->1, 0->0)}
     }
-    this.array = newArray
+    this.colors = newArray
     this.edges = newEdges
     this
   }
@@ -66,10 +76,10 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
     val newArray = Array.fill(5,5)(0)
     val newEdges = Array.fill(5,5)(Array(0))
     for (x <- Range(0,5); y <- Range(0,5)) {
-      newArray(x)(y) = this.array(4-x)(y)
+      newArray(x)(y) = this.colors(4-x)(y)
       newEdges(x)(y) = this.edges(4-x)(y).map{Map(1->1, 2->4, 3->3, 4->2, 0->0)}
     }
-    this.array = newArray
+    this.colors = newArray
     this.edges = newEdges
     this
   }
@@ -78,10 +88,10 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
     val newArray = Array.fill(5,5)(0)
     val newEdges = Array.fill(5,5)(Array(0))
     for (x <- Range(0,5); y <- Range(0,5)) {
-      newArray(x)(y) = this.array(x)(4-y)
+      newArray(x)(y) = this.colors(x)(4-y)
       newEdges(x)(y) = this.edges(x)(4-y).map{Map(1->3, 2->2, 3->1, 4->4, 0->0)}
     }
-    this.array = newArray
+    this.colors = newArray
     this.edges = newEdges
     this
   }
@@ -109,8 +119,7 @@ class Pentamino(private var array: Array[Array[Int]], private var edges: Array[A
 object Pentamino {
   
   val size = 5
-  
-  def pentaminoes: Vector[Char] = Vector('p', 'x', 'f', 'v', 'w', 'y', 'i', 't', 'z', 'u', 'n', 'l')
+  val pentaminoes: Vector[Char] = Vector('p', 'x', 'f', 'v', 'w', 'y', 'i', 't', 'z', 'u', 'n', 'l')
   
   def apply(colors: Array[Array[Int]], edges: Array[Array[Array[Int]]] ): Pentamino = new Pentamino(colors, edges)
   
@@ -151,6 +160,8 @@ object Pentamino {
     val pentaminoChar = this.pentaminoes(Random.nextInt(pentaminoes.size))
     this(pentaminoChar, c1, c2, c3, c4, c5).randomRotation()
   }
+  
+  //The shapes of all diffren pentaminoes are defined below.
   
   def p(c1: Int, c2: Int, c3:Int, c4:Int, c5:Int): Pentamino = {
     Pentamino( Array( 0, 0, 0, 0, 0,
