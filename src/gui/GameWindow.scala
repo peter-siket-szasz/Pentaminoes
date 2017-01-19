@@ -158,7 +158,6 @@ private object GameWindow extends SimpleSwingApplication {
   //The main game screen, lots of insets to align components
   val gameScreen = new Screen {
     focusable = true
-    val c = new Constraints
     c.gridx = 0
     c.gridy = 0
     c.gridwidth = 6
@@ -200,7 +199,6 @@ private object GameWindow extends SimpleSwingApplication {
 
   //The main menu screen
   val menuScreen = new Screen {
-    val c = new Constraints
     c.insets = new Insets(13, 0, 13, 0)
     layout(playButton) = c
     c.gridy = 2
@@ -215,7 +213,6 @@ private object GameWindow extends SimpleSwingApplication {
   //Highscore screen, labels under each other
   val highscoreScreen = new Screen {
     val scoreInfo = new Label { text = "Name, Score, Level, Rows"; font = defaultFont; foreground = Color.WHITE }
-    val c = new Constraints
     c.gridx = 0
     c.gridy = 0
     c.ipady = 25
@@ -247,13 +244,12 @@ private object GameWindow extends SimpleSwingApplication {
     val infoGridData = new Grid
     infoGridData.add(Pentamino('f',2,3,3,1,1).flipVertical(), 2, 2)
     infoGridData.add(Pentamino('p',1,1,2,2,1).flipVertical().rotateClockwise(), 4, 3)
-    val infoGrid0 = new Display(7,1,infoGridData.colors,infoGridData.edges,30)
+    val infoGrid0 = new Display(7,7,infoGridData.colors,infoGridData.edges,30)
     infoGridData.add(Pentamino('l',3,3,2,2,3).rotateCounterClockwise(), 3,5)
-    val infoGrid1 = new Display(7,1,infoGridData.colors,infoGridData.edges,30)
+    val infoGrid1 = new Display(7,7,infoGridData.colors,infoGridData.edges,30)
     infoGridData.remove(2,2)
     infoGridData.remove(3,5)
-    val infoGrid2 = new Display(7,1,infoGridData.colors, infoGridData.edges, 30)
-    val c = new Constraints
+    val infoGrid2 = new Display(7,7,infoGridData.colors, infoGridData.edges, 30)
     c.gridwidth = 5
     c.gridx = 0
     c.gridy = 0

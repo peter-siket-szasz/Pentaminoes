@@ -8,6 +8,8 @@ class Screen extends GridBagPanel {
   
   private val backgroundPic = new ImageIcon("Icons/background.png")
   
+  val c = new Constraints
+  
   override def paintComponent(g: Graphics2D) = {
     g.drawImage(backgroundPic.getImage, 0, 0, null)
   }

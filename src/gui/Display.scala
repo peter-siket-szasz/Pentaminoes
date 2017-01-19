@@ -6,7 +6,7 @@ import java.awt.Color
 
 class Display(width: Int, height: Int, var colors: grid, var edges: Vector[Vector[Vector[Boolean]]], blockSize: Int) 
   extends GridPanel(width, height) {
-    preferredSize = new Dimension(width * blockSize, width * blockSize)
+    preferredSize = new Dimension(width * blockSize, height * blockSize)
 
     //Override paintComponent with the paint method defined in the companion object
     override def paintComponent(g: Graphics2D) = 
