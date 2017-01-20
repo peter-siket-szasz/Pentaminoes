@@ -6,7 +6,6 @@ import scala.swing._
 import scala.swing.event._
 import java.awt.Color
 import scala.swing.GridBagPanel._
-import scala.util.Random
 import javax.swing.{ UIManager, ImageIcon }
 import java.io.File
 import javax.sound.sampled.AudioSystem
